@@ -59,13 +59,29 @@ python tools/test_bisenetv2_cityscapes.py --weights_path ./model/cityscapes/bise
 
 The results are as follows:
 
-`Test Input Image`
+`Test Input Image 1`
 
 ![Test Input](./data/test_image/test_01.png)
 
-`Decoded Output Mask Image`
+`Decoded Output Mask Image 1`
 
 ![Test Lane_Mask](./data/test_image/test_01_mask_result.png)
+
+`Test Input Image 2`
+
+![Test Input](./data/test_image/test_02.png)
+
+`Decoded Output Mask Image 2`
+
+![Test Lane_Mask](./data/test_image/test_02_mask_result.png)
+
+`Test Input Image 3`
+
+![Test Input](./data/test_image/test_03.png)
+
+`Decoded Output Mask Image 3`
+
+![Test Lane_Mask](./data/test_image/test_03_mask_result.png)
 
 
 If you want to evaluate the model on the whole cityscapes 
