@@ -154,7 +154,7 @@ def test_bisenet_cityspaces(image_path, weights_path):
         saver.restore(sess, weights_path)
 
         t_start = time.time()
-        loop_times = 1
+        loop_times = 1000
         for i in range(loop_times):
             prediction_value = sess.run(
                 fetches=prediction,
@@ -175,7 +175,6 @@ def test_bisenet_cityspaces(image_path, weights_path):
         print('Prediction mask unique label ids: {}'.format(np.unique(prediction_value)))
 
         prediction_mask_color = decode_prediction_mask(prediction_value)
-        cv2.imwrite("./data/test_image/test_01_mask_result.png", prediction_mask_color)
         plt.figure('src_image')
         plt.imshow(src_image[:, :, (2, 1, 0)])
         plt.figure('prediction_mask_color')
