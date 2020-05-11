@@ -31,7 +31,7 @@ def init_args():
     parser = argparse.ArgumentParser()
     parser.add_argument('-w', '--pb_file_path', type=str, help='The model weights file path')
     parser.add_argument('-d', '--dataset_dir', type=str, help='The dataset dir',
-                        default='/media/baidu/DataRepo/IMAGE_SCENE_SEGMENTATION/CITYSPACES')
+                        default='./data/example_dataset/cityscapes')
     parser.add_argument('--min_scale', type=float, default=1.0, help='min rescale ratio')
     parser.add_argument('--max_scale', type=float, default=1.0, help='max rescale ratio')
     parser.add_argument('--scale_step_size', type=float, default=0.25, help='rescale ratio step size')

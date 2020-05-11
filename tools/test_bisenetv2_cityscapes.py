@@ -31,7 +31,6 @@ LABEL_CONTOURS = [(0, 0, 0),  # 0=road
                   (192, 128, 0), (64, 0, 128), (192, 0, 128), (64, 128, 128), (192, 128, 128),
                   # 16=train, 17=motorcycle, 18=bicycle
                   (0, 64, 0), (128, 64, 0), (0, 192, 0)]
-MASK_LABEL_IMG_DIR = '/media/baidu/DataRepo/IMAGE_SCENE_SEGMENTATION/CITYSPACES/gt_annotation/gtFine/train'
 
 
 def init_args():
@@ -42,7 +41,6 @@ def init_args():
     parser = argparse.ArgumentParser()
     parser.add_argument('-i', '--src_image_path', type=str, help='The input source image')
     parser.add_argument('-w', '--weights_path', type=str, help='The model weights file path')
-    parser.add_argument('-s', '--save_path', type=str, help='The output mask image save path')
 
     return parser.parse_args()
 
@@ -154,11 +152,9 @@ def test_bisenet_cityspaces(image_path, weights_path):
     # run net and decode output prediction
     with sess.as_default():
         saver.restore(sess, weights_path)
-        # saver.save(sess=sess, save_path='./tmp/test.ckpt')
-        # raise ValueError
 
         t_start = time.time()
-        loop_times = 10
+        loop_times = 1
         for i in range(loop_times):
             prediction_value = sess.run(
                 fetches=prediction,
@@ -176,30 +172,14 @@ def test_bisenet_cityspaces(image_path, weights_path):
             interpolation=cv2.INTER_NEAREST
         )
 
-        image_name = ops.split(image_path)[1]
-        city_name = image_name.split('_')[0]
-        label_mask_image_name = image_name.replace('leftImg8bit.png', 'gtFine_labelTrainIds.png')
-        label_mask_image_path = ops.join(MASK_LABEL_IMG_DIR, city_name, label_mask_image_name)
-        assert ops.exists(label_mask_image_path), '{:s} not exist'.format(label_mask_image_path)
-        label_mask_image = cv2.imread(label_mask_image_path, cv2.IMREAD_GRAYSCALE)
-
         print('Prediction mask unique label ids: {}'.format(np.unique(prediction_value)))
-        print('Label mask unique label ids: {}'.format(np.unique(label_mask_image)))
-        miou = compute_iou(
-            y_pred=np.reshape(prediction_value, newshape=[-1, ]),
-            y_true=np.reshape(label_mask_image, newshape=[-1, ]),
-            num_classes=CFG.DATASET.NUM_CLASSES
-        )
-        print('Miou: {:.5f}'.format(miou))
 
         prediction_mask_color = decode_prediction_mask(prediction_value)
-        label_mask_color = decode_prediction_mask(label_mask_image)
+        cv2.imwrite("./data/test_image/test_01_mask_result.png", prediction_mask_color)
         plt.figure('src_image')
         plt.imshow(src_image[:, :, (2, 1, 0)])
         plt.figure('prediction_mask_color')
         plt.imshow(prediction_mask_color[:, :, (2, 1, 0)])
-        plt.figure('label_mask_color')
-        plt.imshow(label_mask_color[:, :, (2, 1, 0)])
         plt.show()
 
 

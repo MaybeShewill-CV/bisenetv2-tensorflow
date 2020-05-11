@@ -143,11 +143,9 @@ def init_args():
     return parser.parse_args()
 
 
-def time_profile_tensorflow_graph(pb_file_path):
+def time_profile_tensorflow_graph(image_file_path, pb_file_path):
     """
 
-    :param pb_file_path:
-    :return:
     """
     assert ops.exists(pb_file_path), '{:s} not exist'.format(pb_file_path)
 
@@ -155,7 +153,7 @@ def time_profile_tensorflow_graph(pb_file_path):
     input_tensor = sess_graph.get_tensor_by_name('prefix/input_tensor:0')
     output_tensor = sess_graph.get_tensor_by_name('prefix/final_output:0')
 
-    image = cv2.imread(IMAGE_PATH, cv2.IMREAD_COLOR)
+    image = cv2.imread(image_file_path, cv2.IMREAD_COLOR)
     image_feed = cv2.resize(image, (1024, 512), interpolation=cv2.INTER_LINEAR)
     image_feed = image_feed.astype('float32') / 255.0
     img_mean = np.array(CFG.DATASET.MEAN_VALUE).reshape((1, 1, len(CFG.DATASET.MEAN_VALUE)))
@@ -230,11 +228,9 @@ def convert_onnx_into_tensorrt_engine(onnx_model_file_path, trt_engine_output_fi
         return None
 
 
-def time_profile_trt_engine(trt_engine_file_path):
+def time_profile_trt_engine(image_file_path, trt_engine_file_path):
     """
 
-    :param trt_engine_file_path:
-    :return:
     """
     with open(trt_engine_file_path, 'rb') as f, trt.Runtime(TRT_LOGGER) as runtime:
         engine = runtime.deserialize_cuda_engine(f.read())
@@ -249,7 +245,7 @@ def time_profile_trt_engine(trt_engine_file_path):
     bindings = [int(d_input), int(d_output)]
 
     # read images
-    src_image = cv2.imread(IMAGE_PATH, cv2.IMREAD_COLOR)
+    src_image = cv2.imread(image_file_path, cv2.IMREAD_COLOR)
     src_image = cv2.resize(src_image, dsize=(1024, 512), interpolation=cv2.INTER_LINEAR)
     src_image = src_image.astype('float32') / 255.0
     img_mean = np.array(CFG.DATASET.MEAN_VALUE).reshape((1, 1, len(CFG.DATASET.MEAN_VALUE)))
@@ -310,12 +306,16 @@ if __name__ == '__main__':
         trt_engine_output_file=args.output_trt_file_path
     )
     # second timeprofile origin tensorflow frozen model
-    time_profile_tensorflow_graph(PB_FILE_PATH)
+    time_profile_tensorflow_graph(
+        image_file_path=args.input_image_path,
+        pb_file_path=args.pb_file_path
+    )
     # third timeprofile trt engine
     time_profile_trt_engine(
-        trt_engine_file_path=TRT_ENGINE_FILE_PATH
+        image_file_path=args.input_image_path,
+        trt_engine_file_path=args.output_trt_file_path
     )
     # fourth estimate model gflops
     estimate_model_gflops(
-        pb_model_file_path=PB_FILE_PATH
+        pb_model_file_path=args.pb_file_path
     )
