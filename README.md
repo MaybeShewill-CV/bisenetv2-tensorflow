@@ -191,7 +191,7 @@ After all was done mentioned above you may simply run following
 command to time profile the model's performance.
 
 ```
-python tools/timeprofile_tensorrt_bisenetv2.py 
+python tools/timeprofile_tensorrt_bisenetv2.py --input_image_path ./data/test_data/test_01.png
 ```
 
 Basically the script do such few things:
@@ -223,6 +223,11 @@ repo better.
 
 Finally thanks to the origin author [ycszen](https://github.com/ycszen).
 BiseNet series are excellent work in my opinion. Really appreciate it.
+
+## TODO
+- [ ] Search better hyperparameter for cityscapes dataset.
+- [ ] Do experiments on other dataset such as CamVid etc.
+- [ ] Organize the code and release bisenetv1 model
 
 ## Acknowledgement
 Please cite my repo 

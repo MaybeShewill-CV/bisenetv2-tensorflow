@@ -161,16 +161,22 @@ def time_profile_tensorflow_graph(image_file_path, pb_file_path):
     image_feed -= img_mean
     image_feed /= img_std
 
-    loops = 500
+    loops = 501
     with tf.Session(graph=sess_graph) as sess:
         t_start = time.time()
+        tmp_cost_time = 0.0
         for i in range(loops):
+            if i == 0:
+                tmp_t_start = time.time()
             ret = sess.run(
                 output_tensor,
                 feed_dict={input_tensor: [image_feed]}
             )
-        print('Origin tensorflow graph inference cost time: {:.5f}'.format((time.time() - t_start) / loops))
-        print('Origin tensorflow graph inference fps: {:.5f}'.format(1 / ((time.time() - t_start) / loops)))
+            if i == 0:
+                tmp_cost_time = time.time() - tmp_t_start
+        t_cost_time = (time.time() - t_start - tmp_cost_time) / (loops - 1)
+        print('Origin tensorflow graph inference cost time: {:.5f}'.format(t_cost_time))
+        print('Origin tensorflow graph inference fps: {:.5f}'.format(1 / t_cost_time))
 
     mask_color = _decode_prediction_mask(ret)
     mask_color = cv2.resize(mask_color, (2048, 1024))
@@ -253,20 +259,25 @@ def time_profile_trt_engine(image_file_path, trt_engine_file_path):
     src_image -= img_mean
     src_image /= img_std
 
-    loop_times = 500
+    loop_times = 501
 
     # Create a stream in which to copy inputs/outputs and run inference.
     stream = cuda.Stream()
     with engine.create_execution_context() as context:
         t_start = time.time()
+        tmp_cost_time = 0.0
         for i in range(loop_times):
+            if i == 0:
+                tmp_t_start = time.time()
             # Transfer input data to the GPU.
             cuda.memcpy_htod_async(d_input, src_image, stream)
             # Run inference.
             context.execute_async(bindings=bindings, stream_handle=stream.handle)
             # Transfer predictions back from the GPU.
             cuda.memcpy_dtoh_async(h_output, d_output, stream)
-        cost_time = (time.time() - t_start) / loop_times
+            if i == 0:
+                tmp_cost_time = time.time() - tmp_t_start
+        cost_time = (time.time() - t_start - tmp_cost_time) / (loop_times - 1)
         # Synchronize the stream
         stream.synchronize()
         print('Inference cost: {:.5f}'.format(cost_time))
