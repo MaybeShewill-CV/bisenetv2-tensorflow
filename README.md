@@ -14,7 +14,7 @@ This software has only been tested on ubuntu 16.04(x64), python3.5,
 cuda-9.0, cudnn-7.0 with a GTX-1070 GPU. To use this repo you 
 need to install tensorflow-gpu 1.12.0 and other version of 
 tensorflow has not been tested but I think it will be able to 
-work properly in tensorflow above version 1.12. Other required 
+work properly if new version was installed in your local machine. Other required 
 package can be installed by
 
 ```
@@ -145,6 +145,8 @@ The main model's hyperparameter are as follows:
 
 **cropped image size**: [2048, 1024]
 
+**step scaling range**: [0.75, 2.0]
+
 **training example nums**: 2975
 
 **testing example nums**: 1525
@@ -233,7 +235,3 @@ BiseNet series are excellent work in my opinion. Really appreciate it.
 Please cite my repo 
 [bisenetv2-tensorflow](https://github.com/MaybeShewill-CV/bisenetv2-tensorflow) 
 if you use it.
-
-This project refers to the following projects:
-
-- [PaddleSeg](https://github.com/PaddlePaddle/PaddleSeg)
