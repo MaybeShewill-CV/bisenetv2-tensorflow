@@ -224,9 +224,6 @@ class Config(dict):
 
 cityscapes_cfg = Config(config_path='./config/cityscapes_bisenet.yaml')
 cityscapes_cfg_v2 = Config(config_path='./config/cityscapes_bisenetv2.yaml')
-adas_hd_lane_cfg = Config(config_path='./config/adas_hd_lane_bisenet.yaml')
-cmos_ipm_lane_cfg = Config(config_path='./config/cmos_ipm_lane_bisenet.yaml')
-cmos_ipm_lane_cfg_v2 = Config(config_path='./config/cmos_ipm_lane_bisenetv2.yaml')
 
 
 if __name__ == '__main__':
