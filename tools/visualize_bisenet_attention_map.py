@@ -8,7 +8,6 @@
 """
 Visualize attention map of ARM and FFM module in Bisenet
 """
-import os
 import os.path as ops
 import argparse
 

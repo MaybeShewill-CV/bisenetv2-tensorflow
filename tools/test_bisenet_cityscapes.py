@@ -31,7 +31,7 @@ LABEL_CONTOURS = [(0, 0, 0),  # 0=road
                   (192, 128, 0), (64, 0, 128), (192, 0, 128), (64, 128, 128), (192, 128, 128),
                   # 16=train, 17=motorcycle, 18=bicycle
                   (0, 64, 0), (128, 64, 0), (0, 192, 0)]
-MASK_LABEL_IMG_DIR = '/media/baidu/DataRepo/IMAGE_SCENE_SEGMENTATION/CITYSPACES/gt_annotation/gtFine/train'
+MASK_LABEL_IMG_DIR = 'PATH/IMAGE_SCENE_SEGMENTATION/CITYSPACES/gt_annotation/gtFine/train'
 
 
 def init_args():

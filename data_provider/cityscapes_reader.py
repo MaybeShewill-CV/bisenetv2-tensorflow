@@ -3,10 +3,10 @@
 # @Time    : 2019/12/12 下午3:09
 # @Author  : MaybeShewill-CV
 # @Site    : https://github.com/MaybeShewill-CV/bisenetv2-tensorflow
-# @File    : pascal_voc_reader.py
+# @File    : cityscapes_reader.py
 # @IDE: PyCharm
 """
-Pascal voc dataset reader
+CityScapes dataset reader
 """
 import os.path as ops
 
@@ -24,7 +24,7 @@ CFG = parse_config_utils.cityscapes_cfg_v2
 
 class _CitySpacesDataset(object):
     """
-    city spaces dataset
+    cityscapes dataset
     """
     def __init__(self, image_file_paths):
         """

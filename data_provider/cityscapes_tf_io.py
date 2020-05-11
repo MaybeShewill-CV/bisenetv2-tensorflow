@@ -14,7 +14,6 @@ import collections
 import six
 
 import tensorflow as tf
-import cv2
 import numpy as np
 import loguru
 
@@ -36,14 +35,6 @@ def _int64_list_feature(values):
     return tf.train.Feature(int64_list=tf.train.Int64List(value=values))
 
 
-def _int64_feature(value):
-    """
-
-    :return:
-    """
-    return tf.train.Feature(int64_list=tf.train.Int64List(value=[value]))
-
-
 def _bytes_list_feature(values):
     """
 
@@ -54,15 +45,6 @@ def _bytes_list_feature(values):
         return value.encode() if isinstance(value, str) and six.PY3 else value
 
     return tf.train.Feature(bytes_list=tf.train.BytesList(value=[_norm2bytes(values)]))
-
-
-def _bytes_feature(value):
-    """
-
-    :param value:
-    :return:
-    """
-    return tf.train.Feature(bytes_list=tf.train.BytesList(value=[value]))
 
 
 class _CityScapesTfWriter(object):
@@ -153,15 +135,9 @@ class _CityScapesTfWriter(object):
                 gt_label_image_path = sample_path[1]
 
                 # prepare gt image
-                # gt_image = cv2.imread(gt_src_image_path, cv2.IMREAD_UNCHANGED)
-                # gt_image_raw = gt_image.tostring()
-
                 gt_image_raw = tf.gfile.FastGFile(gt_src_image_path, 'rb').read()
 
                 # prepare gt binary image
-                # gt_binary_image = cv2.imread(gt_label_image_path, cv2.IMREAD_UNCHANGED)
-                # gt_binary_image_raw = gt_binary_image.tostring()
-
                 gt_binary_image_raw = tf.gfile.FastGFile(gt_label_image_path, 'rb').read()
 
                 example = tf.train.Example(

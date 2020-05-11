@@ -3,10 +3,10 @@
 # @Time    : 2019/12/13 下午5:46
 # @Author  : MaybeShewill-CV
 # @Site    : https://github.com/MaybeShewill-CV/bisenetv2-tensorflow
-# @File    : train_bisenet_pascal_voc.py
+# @File    : train_bisenet_cityscapes.py
 # @IDE: PyCharm
 """
-Train bisenet on city spaces dataset
+Train bisenet on cityscapes dataset
 """
 from trainner import cityscapes_bisenet_trainner as trainner
 from local_utils.log_util import init_logger

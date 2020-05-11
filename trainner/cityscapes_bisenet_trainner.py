@@ -3,7 +3,7 @@
 # @Time    : 2019/12/13 下午4:02
 # @Author  : MaybeShewill-CV
 # @Site    : https://github.com/MaybeShewill-CV/bisenetv2-tensorflow
-# @File    : pascal_voc_bisenet_trainner.py
+# @File    : cityscapes_bisenet_trainner.py
 # @IDE: PyCharm
 """
 Bisenet trainner for city spaces dataset

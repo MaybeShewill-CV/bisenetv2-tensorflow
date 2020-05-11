@@ -6,7 +6,7 @@
 # @File    : cityscapes_bisenetv2_single_gpu_trainner.py
 # @IDE: PyCharm
 """
-Bisenetv2 trainner for city scapes dataset
+Bisenetv2 trainner for cityscapes dataset
 """
 import os
 import os.path as ops

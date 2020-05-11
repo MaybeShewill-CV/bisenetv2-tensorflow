@@ -13,11 +13,7 @@ import numpy as np
 
 from local_utils.config_utils import parse_config_utils
 
-# CFG = parse_config_utils.cityscapes_cfg
 CFG = parse_config_utils.cityscapes_cfg_v2
-# CFG = parse_config_utils.cmos_ipm_lane_cfg
-# CFG = parse_config_utils.cmos_ipm_lane_cfg_v2
-# CFG = parse_config_utils.adas_hd_lane_cfg
 
 
 def resize(img, grt=None, mode='train'):

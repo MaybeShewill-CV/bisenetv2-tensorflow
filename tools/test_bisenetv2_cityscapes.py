@@ -3,12 +3,11 @@
 # @Time    : 2019/12/16 上午11:15
 # @Author  : MaybeShewill-CV
 # @Site    : https://github.com/MaybeShewill-CV/bisenetv2-tensorflow
-# @File    : test_bisenet_pascal_voc.py
+# @File    : test_bisenetv2_pascal_voc.py
 # @IDE: PyCharm
 """
 Test bisenetv2 on cityspaces dataset
 """
-import os.path as ops
 import argparse
 
 import cv2

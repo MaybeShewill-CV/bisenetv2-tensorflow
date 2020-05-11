@@ -14,9 +14,7 @@ from bisenet_model import cnn_basenet
 from bisenet_model import xception
 from local_utils.config_utils import parse_config_utils
 
-CFG = parse_config_utils.adas_hd_lane_cfg
-# CFG = parse_config_utils.cmos_ipm_lane_cfg
-# CFG = parse_config_utils.cityscapes_cfg
+CFG = parse_config_utils.cityscapes_cfg
 
 
 class _AttentionRefine(cnn_basenet.CNNBaseModel):

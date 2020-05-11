@@ -16,7 +16,6 @@ from bisenet_model import cnn_basenet
 from local_utils.config_utils import parse_config_utils
 
 CFG = parse_config_utils.cityscapes_cfg_v2
-# CFG = parse_config_utils.cmos_ipm_lane_cfg_v2
 
 
 class _StemBlock(cnn_basenet.CNNBaseModel):

@@ -3,7 +3,7 @@
 # @Time    : 2020/4/7 下午2:37
 # @Author  : MaybeShewill-CV
 # @Site    : https://github.com/MaybeShewill-CV/bisenetv2-tensorflow
-# @File    : visualize_bisenet_attention_map.py
+# @File    : visualize_bisenetv2_attention_map.py
 # @IDE: PyCharm
 """
 Visualize attention map of Bilateral Guided Aggregation module in BisenetV2
