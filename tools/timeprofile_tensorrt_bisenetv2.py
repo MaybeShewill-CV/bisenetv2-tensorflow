@@ -28,8 +28,6 @@ CFG = parse_config_utils.cityscapes_cfg_v2
 PB_FILE_PATH = './checkpoint/bisenetv2_cityscapes_frozen.pb'
 ONNX_MODEL_FILE_PATH = './checkpoint/bisenetv2_cityscapes_frozen.onnx'
 TRT_ENGINE_FILE_PATH = './checkpoint/bisenetv2_cityscapes_frozen.trt'
-IMAGE_PATH = '/media/baidu/DataRepo/IMAGE_SCENE_SEGMENTATION/CITYSPACES/' \
-             'gt_images/leftImg8bit/train/strasbourg/strasbourg_000000_017159_leftImg8bit.png'
 
 LABEL_CONTOURS = [(0, 0, 0),  # 0=road
                   # 1=sidewalk, 2=building, 3=wall, 4=fence, 5=pole
