@@ -23,17 +23,17 @@ AUG:
         CONTRAST_JITTER_RATIO: 0.5
         SATURATION_JITTER_RATIO: 0.5
 DATASET:
-    DATA_DIR: '/media/baidu/DataRepo/IMAGE_SCENE_SEGMENTATION/CITYSPACES'
+    DATA_DIR: '/PATH/IMAGE_SCENE_SEGMENTATION/CITYSPACES'
     IMAGE_TYPE: 'rgb'  # choice rgb or rgba
     NUM_CLASSES: 19
-    TEST_FILE_LIST: '/media/baidu/DataRepo/IMAGE_SCENE_SEGMENTATION/CITYSPACES/image_file_index/test.txt'
-    TRAIN_FILE_LIST: '/media/baidu/DataRepo/IMAGE_SCENE_SEGMENTATION/CITYSPACES/image_file_index/train.txt'
-    VAL_FILE_LIST: '/media/baidu/DataRepo/IMAGE_SCENE_SEGMENTATION/CITYSPACES/image_file_index/val.txt'
+    TEST_FILE_LIST: '/PATH/IMAGE_SCENE_SEGMENTATION/CITYSPACES/image_file_index/test.txt'
+    TRAIN_FILE_LIST: '/PATH/IMAGE_SCENE_SEGMENTATION/CITYSPACES/image_file_index/train.txt'
+    VAL_FILE_LIST: '/PATH/IMAGE_SCENE_SEGMENTATION/CITYSPACES/image_file_index/val.txt'
     IGNORE_INDEX: 255
     PADDING_VALUE: [127.5, 127.5, 127.5]
     MEAN_VALUE: [0.5, 0.5, 0.5]
     STD_VALUE: [0.5, 0.5, 0.5]
-    CPU_MULTI_PROCESS_NUMS: 4
+    CPU_MULTI_PROCESS_NUMS: 16
 FREEZE:
     MODEL_FILENAME: 'model'
     PARAMS_FILENAME: 'params'
@@ -53,8 +53,8 @@ TRAIN:
         ENABLE: False
         SNAPSHOT_PATH: ''
     SNAPSHOT_EPOCH: 8
-    BATCH_SIZE: 8
-    EPOCH_NUMS: 1601
+    BATCH_SIZE: 16
+    EPOCH_NUMS: 1025
     WARM_UP:
         ENABLE: True
         EPOCH_NUMS: 16
@@ -65,10 +65,10 @@ TRAIN:
         EPOCH: 1
     MULTI_GPU:
         ENABLE: True
-        GPU_DEVICES: ['0', '1']
+        GPU_DEVICES: ['0', '1', '2', '3']
         CHIEF_DEVICE_INDEX: 0
 SOLVER:
-    LR: 0.025
+    LR: 0.05
     LR_POLICY: 'poly'
     LR_POLYNOMIAL_POWER: 0.9
     OPTIMIZER: 'sgd'
