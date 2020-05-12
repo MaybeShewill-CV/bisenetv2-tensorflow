@@ -3,7 +3,7 @@
 # @Time    : 2020/4/10 下午5:55
 # @Author  : MaybeShewill-CV
 # @Site    : https://github.com/MaybeShewill-CV/bisenetv2-tensorflow
-# @File    : timeprofile_tensorrt_bisenetv2.py
+# @File    : timeprofile_bisenetv2.py
 # @IDE: PyCharm
 """
 Test tensorrt bisenetv2 inference time consuming
@@ -161,7 +161,7 @@ def time_profile_tensorflow_graph(image_file_path, pb_file_path):
     image_feed -= img_mean
     image_feed /= img_std
 
-    loops = 501
+    loops = 5001
     with tf.Session(graph=sess_graph) as sess:
         t_start = time.time()
         tmp_cost_time = 0.0
@@ -259,25 +259,20 @@ def time_profile_trt_engine(image_file_path, trt_engine_file_path):
     src_image -= img_mean
     src_image /= img_std
 
-    loop_times = 501
+    loop_times = 5000
 
     # Create a stream in which to copy inputs/outputs and run inference.
     stream = cuda.Stream()
     with engine.create_execution_context() as context:
         t_start = time.time()
-        tmp_cost_time = 0.0
         for i in range(loop_times):
-            if i == 0:
-                tmp_t_start = time.time()
             # Transfer input data to the GPU.
             cuda.memcpy_htod_async(d_input, src_image, stream)
             # Run inference.
             context.execute_async(bindings=bindings, stream_handle=stream.handle)
             # Transfer predictions back from the GPU.
             cuda.memcpy_dtoh_async(h_output, d_output, stream)
-            if i == 0:
-                tmp_cost_time = time.time() - tmp_t_start
-        cost_time = (time.time() - t_start - tmp_cost_time) / (loop_times - 1)
+        cost_time = (time.time() - t_start) / loop_times
         # Synchronize the stream
         stream.synchronize()
         print('Inference cost: {:.5f}'.format(cost_time))

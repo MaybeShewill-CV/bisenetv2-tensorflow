@@ -209,7 +209,7 @@ After all was done mentioned above you may simply run following
 command to time profile the model's performance.
 
 ```
-python tools/timeprofile_tensorrt_bisenetv2.py --input_image_path ./data/test_data/test_01.png
+python tools/timeprofile_bisenetv2.py --input_image_path ./data/test_data/test_01.png
 ```
 
 Basically the script do such few things:
