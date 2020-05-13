@@ -69,8 +69,9 @@ def preprocess_image(src_image, input_tensor_size):
     :param input_tensor_size:
     :return:
     """
+    output_image = src_image[:, :, (2, 1, 0)]
     output_image = cv2.resize(
-        src_image,
+        output_image,
         dsize=(input_tensor_size[0], input_tensor_size[1]),
         interpolation=cv2.INTER_LINEAR
     )
@@ -153,7 +154,7 @@ def test_bisenet_cityspaces(image_path, weights_path):
         saver.restore(sess, weights_path)
 
         t_start = time.time()
-        loop_times = 1000
+        loop_times = 2000
         for i in range(loop_times):
             prediction_value = sess.run(
                 fetches=prediction,

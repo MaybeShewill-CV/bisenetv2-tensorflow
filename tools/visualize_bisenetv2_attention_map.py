@@ -135,6 +135,7 @@ def visualize_model_attention_map(src_input_image, pb_file_path):
 
     with tf.Session(graph=sess_graph) as sess:
         src_image = cv2.imread(src_input_image, cv2.IMREAD_COLOR)
+        src_image = src_image[:, :, (2, 1, 0)]
         input_image_block = cv2.resize(src_image, dsize=(1024, 512), interpolation=cv2.INTER_LINEAR)
         input_image_block_rescale = input_image_block.astype('float32') / 255.0
         img_mean = np.array(CFG.DATASET.MEAN_VALUE).reshape((1, 1, len(CFG.DATASET.MEAN_VALUE)))

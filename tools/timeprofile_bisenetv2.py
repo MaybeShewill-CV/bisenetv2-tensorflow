@@ -154,7 +154,8 @@ def time_profile_tensorflow_graph(image_file_path, pb_file_path):
     output_tensor = sess_graph.get_tensor_by_name('prefix/final_output:0')
 
     image = cv2.imread(image_file_path, cv2.IMREAD_COLOR)
-    image_feed = cv2.resize(image, (1024, 512), interpolation=cv2.INTER_LINEAR)
+    image_feed = image[:, :, (2, 1, 0)]
+    image_feed = cv2.resize(image_feed, (1024, 512), interpolation=cv2.INTER_LINEAR)
     image_feed = image_feed.astype('float32') / 255.0
     img_mean = np.array(CFG.DATASET.MEAN_VALUE).reshape((1, 1, len(CFG.DATASET.MEAN_VALUE)))
     img_std = np.array(CFG.DATASET.STD_VALUE).reshape((1, 1, len(CFG.DATASET.STD_VALUE)))
@@ -252,6 +253,7 @@ def time_profile_trt_engine(image_file_path, trt_engine_file_path):
 
     # read images
     src_image = cv2.imread(image_file_path, cv2.IMREAD_COLOR)
+    src_image = src_image[:, :, (2, 1, 0)]
     src_image = cv2.resize(src_image, dsize=(1024, 512), interpolation=cv2.INTER_LINEAR)
     src_image = src_image.astype('float32') / 255.0
     img_mean = np.array(CFG.DATASET.MEAN_VALUE).reshape((1, 1, len(CFG.DATASET.MEAN_VALUE)))

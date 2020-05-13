@@ -160,6 +160,7 @@ class CityscapesSubmittor(object):
                 interpolation=cv2.INTER_NEAREST
             )
         else:
+            src_image = src_image[:, :, (2, 1, 0)]
             src_image = cv2.resize(
                 src_image,
                 dsize=(input_tensor_size[0], input_tensor_size[1]),
