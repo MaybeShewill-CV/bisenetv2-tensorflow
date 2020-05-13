@@ -245,7 +245,7 @@ BiseNet series are excellent work in my opinion. Really appreciate it.
 ## TODO
 - [ ] Search better hyperparameter for cityscapes dataset.
 - [ ] Do experiments on other dataset such as CamVid etc.
-- [ ] Organize the code and release bisenetv1 model
+- [ ] Organize the code and release bisenetv1 training scripts and pretrained model.
 
 ## Acknowledgement
 Please cite my repo 
