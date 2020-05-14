@@ -46,7 +46,7 @@ the file contains a pair of training samples.
 In this repo I uploaded a model trained on cityscapes dataset 
 [CityScapes](https://www.cityscapes-dataset.com/). The pretrained
 model can be found at ./model/cityscapes/bisenetv2. The pretrained
-model can reach a miou of 71.655 on cityscapes validation dataset.
+model can reach a miou of 71.821 on cityscapes validation dataset.
 This implementation can reach a 83fps on GTX 1070 accelerated by
 tensorrt.
 
