@@ -150,6 +150,13 @@ class MultiScaleEvaluator(object):
         :return:
         """
         # prepare input image
+        if not is_label:
+            src_image = src_image.astype('float32') / 255.0
+            img_mean = np.array(CFG.DATASET.MEAN_VALUE).reshape((1, 1, len(CFG.DATASET.MEAN_VALUE)))
+            img_std = np.array(CFG.DATASET.STD_VALUE).reshape((1, 1, len(CFG.DATASET.STD_VALUE)))
+            src_image -= img_mean
+            src_image /= img_std
+
         if is_label:
             src_image = cv2.resize(
                 src_image,
@@ -163,13 +170,6 @@ class MultiScaleEvaluator(object):
                 dsize=(input_tensor_size[0], input_tensor_size[1]),
                 interpolation=cv2.INTER_LINEAR
             )
-
-        if not is_label:
-            src_image = src_image.astype('float32') / 255.0
-            img_mean = np.array(CFG.DATASET.MEAN_VALUE).reshape((1, 1, len(CFG.DATASET.MEAN_VALUE)))
-            img_std = np.array(CFG.DATASET.STD_VALUE).reshape((1, 1, len(CFG.DATASET.STD_VALUE)))
-            src_image -= img_mean
-            src_image /= img_std
         src_image = np.expand_dims(src_image, axis=0)
         return src_image
 
