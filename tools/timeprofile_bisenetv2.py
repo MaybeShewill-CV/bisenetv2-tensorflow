@@ -307,6 +307,8 @@ if __name__ == '__main__':
     test code
     """
     args = init_args()
+    if not ops.exists(args.input_image_path):
+        raise ValueError('Input image path: {:s} not exist'.format(args.input_image_path))
 
     # first convert onnx model into trt engine
     trt_engine = convert_onnx_into_tensorrt_engine(
