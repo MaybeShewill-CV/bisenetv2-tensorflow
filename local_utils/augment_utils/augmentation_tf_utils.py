@@ -430,7 +430,7 @@ def normalize_image(img, grt):
     return img, grt
 
 
-def preprocess_image(src_image, label_image):
+def preprocess_image_for_train(src_image, label_image):
     """
 
     :param src_image:
@@ -459,6 +459,35 @@ def preprocess_image(src_image, label_image):
         crop_height=CFG.AUG.TRAIN_CROP_SIZE[1],
         crop_width=CFG.AUG.TRAIN_CROP_SIZE[0]
     )
+    # normalize image
+    src_image, label_image = normalize_image(src_image, label_image)
+    # downsample input image
+    resize_image_size = (int(CFG.AUG.TRAIN_CROP_SIZE[1] / 2), int(CFG.AUG.TRAIN_CROP_SIZE[0] / 2))
+    src_image = tf.image.resize_bilinear(
+        images=tf.expand_dims(src_image, axis=0),
+        size=resize_image_size,
+        align_corners=True
+    )
+    label_image = tf.image.resize_nearest_neighbor(
+        images=tf.expand_dims(label_image, axis=0),
+        size=resize_image_size,
+        align_corners=True
+    )
+
+    src_image = tf.squeeze(src_image, axis=0)
+    label_image = tf.squeeze(label_image, axis=0)
+
+    return src_image, label_image
+
+
+def preprocess_image_for_val(src_image, label_image):
+    """
+
+    :param src_image:
+    :param label_image:
+    :return:
+    """
+    src_image = tf.cast(src_image, tf.float32)
     # normalize image
     src_image, label_image = normalize_image(src_image, label_image)
     # downsample input image

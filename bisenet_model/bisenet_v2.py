@@ -735,6 +735,10 @@ class BiseNetV2(cnn_basenet.CNNBaseModel):
         self._class_nums = CFG.DATASET.NUM_CLASSES
         self._weights_decay = CFG.SOLVER.WEIGHT_DECAY
         self._loss_type = CFG.SOLVER.LOSS_TYPE
+        self._enable_ohem = CFG.SOLVER.OHEM.ENABLE
+        if self._enable_ohem:
+            self._ohem_score_thresh = CFG.SOLVER.OHEM.SCORE_THRESH
+            self._ohem_min_sample_nums = CFG.SOLVER.OHEM.MIN_SAMPLE_NUMS
         self._ge_expand_ratio = CFG.MODEL.BISENETV2.GE_EXPAND_RATIO
         self._semantic_channel_ratio = CFG.MODEL.BISENETV2.SEMANTIC_CHANNEL_LAMBDA
         self._seg_head_ratio = CFG.MODEL.BISENETV2.SEGHEAD_CHANNEL_EXPAND_RATIO
@@ -866,6 +870,49 @@ class BiseNetV2(cnn_basenet.CNNBaseModel):
                 name='cross_entropy_loss'
             )
         return loss
+
+    @classmethod
+    def _compute_ohem_cross_entropy_loss(cls, seg_logits, labels, class_nums, name, thresh, n_min):
+        """
+
+        :param seg_logits:
+        :param labels:
+        :param class_nums:
+        :param name:
+        :return:
+        """
+        with tf.variable_scope(name_or_scope=name):
+            # first check if the logits' shape is matched with the labels'
+            seg_logits_shape = seg_logits.shape[1:3]
+            labels_shape = labels.shape[1:3]
+            seg_logits = tf.cond(
+                tf.reduce_all(tf.equal(seg_logits_shape, labels_shape)),
+                true_fn=lambda: seg_logits,
+                false_fn=lambda: tf.image.resize_bilinear(seg_logits, labels_shape)
+            )
+            seg_logits = tf.reshape(seg_logits, [-1, class_nums])
+            labels = tf.reshape(labels, [-1, ])
+            indices = tf.squeeze(tf.where(tf.less_equal(labels, class_nums - 1)), 1)
+            seg_logits = tf.gather(seg_logits, indices)
+            labels = tf.cast(tf.gather(labels, indices), tf.int32)
+
+            # compute cross entropy loss
+            loss = tf.nn.sparse_softmax_cross_entropy_with_logits(
+                labels=labels,
+                logits=seg_logits
+            )
+            loss, _ = tf.nn.top_k(loss, tf.size(loss), sorted=True)
+
+            # apply ohem
+            ohem_thresh = tf.multiply(-1.0, tf.math.log(thresh), name='ohem_score_thresh')
+            ohem_cond = tf.greater(loss[n_min], ohem_thresh)
+            loss_select = tf.cond(
+                pred=ohem_cond,
+                true_fn=lambda: tf.gather(loss, tf.squeeze(tf.where(tf.greater(loss, ohem_thresh)), 1)),
+                false_fn=lambda: loss[:n_min]
+            )
+            loss_value = tf.reduce_mean(loss_select, name='ohem_cross_entropy_loss')
+        return loss_value
 
     @classmethod
     def _compute_l2_reg_loss(cls, var_list, weights_decay, name):
@@ -1051,12 +1098,22 @@ class BiseNetV2(cnn_basenet.CNNBaseModel):
             for stage_name, seg_logits in semantic_branch_seg_logits.items():
                 loss_stage_name = '{:s}_segmentation_loss'.format(stage_name)
                 if self._loss_type == 'cross_entropy':
-                    segment_loss += self._compute_cross_entropy_loss(
-                        seg_logits=seg_logits,
-                        labels=label_tensor,
-                        class_nums=self._class_nums,
-                        name=loss_stage_name
-                    )
+                    if not self._enable_ohem:
+                        segment_loss += self._compute_cross_entropy_loss(
+                            seg_logits=seg_logits,
+                            labels=label_tensor,
+                            class_nums=self._class_nums,
+                            name=loss_stage_name
+                        )
+                    else:
+                        segment_loss += self._compute_ohem_cross_entropy_loss(
+                            seg_logits=seg_logits,
+                            labels=label_tensor,
+                            class_nums=self._class_nums,
+                            name=loss_stage_name,
+                            thresh=self._ohem_score_thresh,
+                            n_min=self._ohem_min_sample_nums
+                        )
                 else:
                     raise NotImplementedError('Not supported loss of type: {:s}'.format(self._loss_type))
             l2_reg_loss = self._compute_l2_reg_loss(
@@ -1118,7 +1175,7 @@ if __name__ == '__main__':
     """
     import time
 
-    time_comsuming_loops = 500
+    time_comsuming_loops = 5
     test_input = tf.random.normal(shape=[1, 512, 1024, 3], dtype=tf.float32)
     test_label = tf.random.uniform(shape=[1, 512, 1024], minval=0, maxval=6, dtype=tf.int32)
 

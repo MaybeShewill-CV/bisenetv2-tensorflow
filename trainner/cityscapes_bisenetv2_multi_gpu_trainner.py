@@ -31,7 +31,6 @@ class BiseNetV2CityScapesMultiTrainer(object):
     """
     init bisenetv2 multi gpu trainner
     """
-
     def __init__(self):
         """
         initialize bisenetv2 multi gpu trainner
@@ -39,12 +38,15 @@ class BiseNetV2CityScapesMultiTrainer(object):
         # define solver params and dataset
         self._cityscapes_io = cityscapes_tf_io.CityScapesTfIO()
         self._train_dataset = self._cityscapes_io.train_dataset_reader
+        self._val_dataset = self._cityscapes_io.val_dataset_reader
         self._steps_per_epoch = len(self._train_dataset)
+        self._val_steps_per_epoch = len(self._val_dataset)
 
         self._model_name = CFG.MODEL.MODEL_NAME
 
         self._train_epoch_nums = CFG.TRAIN.EPOCH_NUMS
         self._batch_size = CFG.TRAIN.BATCH_SIZE
+        self._val_batch_size = CFG.TRAIN.VAL_BATCH_SIZE
         self._snapshot_epoch = CFG.TRAIN.SNAPSHOT_EPOCH
         self._model_save_dir = ops.join(CFG.TRAIN.MODEL_SAVE_DIR, self._model_name)
         self._tboard_save_dir = ops.join(CFG.TRAIN.TBOARD_SAVE_DIR, self._model_name)
@@ -88,9 +90,13 @@ class BiseNetV2CityScapesMultiTrainer(object):
                 src_imgs, label_imgs = self._train_dataset.next_batch(batch_size=self._batch_size_per_gpu)
                 self._input_src_image_list.append(src_imgs)
                 self._input_label_image_list.append(label_imgs)
+            self._val_input_src_image, self._val_input_label_image = self._val_dataset.next_batch(
+                batch_size=self._val_batch_size
+            )
 
         # define model
         self._model = bisenet_v2.BiseNetV2(phase='train')
+        self._val_model = bisenet_v2.BiseNetV2(phase='test')
 
         # define average container
         tower_grads = []
@@ -101,6 +107,8 @@ class BiseNetV2CityScapesMultiTrainer(object):
         # define learning rate
         with tf.variable_scope('learning_rate'):
             self._global_step = tf.Variable(1.0, dtype=tf.float32, trainable=False, name='global_step')
+            self._val_global_step = tf.Variable(1.0, dtype=tf.float32, trainable=False, name='val_global_step')
+            self._val_global_step_update = tf.assign_add(self._val_global_step, 1.0)
             warmup_steps = tf.constant(
                 self._warmup_epoches * self._steps_per_epoch, dtype=tf.float32, name='warmup_steps'
             )
@@ -156,6 +164,14 @@ class BiseNetV2CityScapesMultiTrainer(object):
         grads = self._average_gradients(tower_grads)
         self._loss = tf.reduce_mean(tower_total_loss, name='reduce_mean_tower_total_loss')
         self._l2_loss = tf.reduce_mean(tower_l2_loss, name='reduce_mean_tower_l2_loss')
+        ret = self._val_model.compute_loss(
+            input_tensor=self._val_input_src_image,
+            label_tensor=self._val_input_label_image,
+            name='BiseNetV2',
+            reuse=True
+        )
+        self._val_loss = ret['total_loss']
+        self._val_l2_loss = ret['l2_loss']
 
         # define moving average op
         with tf.variable_scope(name_or_scope='moving_avg'):
@@ -180,6 +196,11 @@ class BiseNetV2CityScapesMultiTrainer(object):
             name='BiseNetV2',
             reuse=True
         )
+        self._val_prediction = self._val_model.inference(
+            input_tensor=self._val_input_src_image,
+            name='BiseNetV2',
+            reuse=True
+        )
 
         # define miou
         if self._enable_miou:
@@ -195,28 +216,50 @@ class BiseNetV2CityScapesMultiTrainer(object):
                     num_classes=CFG.DATASET.NUM_CLASSES
                 )
 
+                val_pred = tf.reshape(self._val_prediction, [-1, ])
+                val_gt = tf.reshape(self._val_input_label_image, [-1, ])
+                indices = tf.squeeze(tf.where(tf.less_equal(val_gt, CFG.DATASET.NUM_CLASSES - 1)), 1)
+                val_gt = tf.gather(val_gt, indices)
+                val_pred = tf.gather(val_pred, indices)
+                self._val_miou, self._val_miou_update_op = tf.metrics.mean_iou(
+                    labels=val_gt,
+                    predictions=val_pred,
+                    num_classes=CFG.DATASET.NUM_CLASSES
+                )
+
         # define saver and loader
         with tf.variable_scope('loader_and_saver'):
             self._net_var = [vv for vv in tf.global_variables() if 'lr' not in vv.name]
             self._loader = tf.train.Saver(self._net_var)
-            self._saver = tf.train.Saver(max_to_keep=5)
+            self._saver = tf.train.Saver(max_to_keep=10)
 
         # define summary
         with tf.variable_scope('summary'):
             summary_merge_list = [
                 tf.summary.scalar("learn_rate", self._learn_rate),
-                tf.summary.scalar("total", self._loss),
+                tf.summary.scalar("total_loss", self._loss),
                 tf.summary.scalar('l2_loss', self._l2_loss)
+            ]
+            val_summary_merge_list = [
+                tf.summary.scalar('val_total_loss', self._val_loss),
+                tf.summary.scalar('val_l2_loss', self._val_l2_loss)
             ]
             if self._enable_miou:
                 with tf.control_dependencies([self._miou_update_op]):
                     summary_merge_list_with_miou = [
                         tf.summary.scalar("learn_rate", self._learn_rate),
-                        tf.summary.scalar("total", self._loss),
+                        tf.summary.scalar("total_loss", self._loss),
                         tf.summary.scalar('l2_loss', self._l2_loss),
                         tf.summary.scalar('miou', self._miou)
                     ]
                     self._write_summary_op_with_miou = tf.summary.merge(summary_merge_list_with_miou)
+                with tf.control_dependencies([self._val_miou_update_op, self._val_global_step_update]):
+                    val_summary_merge_list_with_miou = [
+                        tf.summary.scalar('val_total_loss', self._val_loss),
+                        tf.summary.scalar('val_l2_loss', self._val_l2_loss),
+                        tf.summary.scalar('val_miou', self._val_miou),
+                    ]
+                    self._val_write_summary_op_with_miou = tf.summary.merge(val_summary_merge_list_with_miou)
             if ops.exists(self._tboard_save_dir):
                 shutil.rmtree(self._tboard_save_dir)
             os.makedirs(self._tboard_save_dir, exist_ok=True)
@@ -224,6 +267,7 @@ class BiseNetV2CityScapesMultiTrainer(object):
             with open(model_params_file_save_path, 'w', encoding='utf-8') as f_obj:
                 CFG.dump_to_json_file(f_obj)
             self._write_summary_op = tf.summary.merge(summary_merge_list)
+            self._val_write_summary_op = tf.summary.merge(val_summary_merge_list)
             self._summary_writer = tf.summary.FileWriter(self._tboard_save_dir, graph=self._sess.graph)
 
         LOG.info('Initialize cityscapes bisenetv2 multi gpu trainner complete')
@@ -335,10 +379,11 @@ class BiseNetV2CityScapesMultiTrainer(object):
             LOG.info('=> Starts to train BiseNetV2 from scratch ...')
             epoch_start_pt = 1
 
+        best_model = []
         for epoch in range(epoch_start_pt, self._train_epoch_nums):
+            # training part
             train_epoch_losses = []
             train_epoch_mious = []
-
             traindataset_pbar = tqdm.tqdm(range(1, self._steps_per_epoch))
             for _ in traindataset_pbar:
                 if self._enable_miou and epoch % self._record_miou_epoch == 0:
@@ -374,14 +419,69 @@ class BiseNetV2CityScapesMultiTrainer(object):
             if self._enable_miou and epoch % self._record_miou_epoch == 0:
                 train_epoch_mious = np.mean(train_epoch_mious)
 
+            # validation part
+            val_epoch_losses = []
+            val_epoch_mious = []
+            valdataset_pbar = tqdm.tqdm(range(1, self._val_steps_per_epoch))
+            for _ in valdataset_pbar:
+                try:
+                    if self._enable_miou and epoch % self._record_miou_epoch == 0:
+                        _, val_summary, val_step_loss, val_global_step_val = self._sess.run(
+                            fetches=[
+                                self._val_miou_update_op, self._val_write_summary_op_with_miou,
+                                self._val_loss, self._val_global_step
+                            ]
+                        )
+                        val_step_miou = self._sess.run(
+                            fetches=self._val_miou
+                        )
+                        val_epoch_losses.append(val_step_loss)
+                        val_epoch_mious.append(val_step_miou)
+                        self._summary_writer.add_summary(val_summary, global_step=val_global_step_val)
+                        valdataset_pbar.set_description(
+                            'val loss: {:.5f}, val miou: {:.5f}'.format(val_step_loss, val_step_miou)
+                        )
+                    else:
+                        val_summary, val_step_loss, val_global_step_val = self._sess.run(
+                            fetches=[
+                                self._val_write_summary_op,
+                                self._val_loss, self._val_global_step
+                            ]
+                        )
+                        val_epoch_losses.append(val_step_loss)
+                        self._summary_writer.add_summary(val_summary, global_step=val_global_step_val)
+                        valdataset_pbar.set_description(
+                            'val loss: {:.5f}'.format(val_step_loss)
+                        )
+                except tf.errors.OutOfRangeError as _:
+                    break
+            val_epoch_losses = np.mean(val_epoch_losses)
+            if self._enable_miou and epoch % self._record_miou_epoch == 0:
+                val_epoch_mious = np.mean(val_epoch_mious)
+
+            # model saving part
             if epoch % self._snapshot_epoch == 0:
                 if self._enable_miou:
-                    snapshot_model_name = 'cityscapes_train_miou={:.4f}.ckpt'.format(train_epoch_mious)
-                    snapshot_model_path = ops.join(self._model_save_dir, snapshot_model_name)
-                    os.makedirs(self._model_save_dir, exist_ok=True)
-                    self._saver.save(self._sess, snapshot_model_path, global_step=epoch)
+                    if len(best_model) < 10:
+                        best_model.append(val_epoch_mious)
+                        best_model = sorted(best_model)
+                        snapshot_model_name = 'cityscapes_val_miou={:.4f}.ckpt'.format(val_epoch_mious)
+                        snapshot_model_path = ops.join(self._model_save_dir, snapshot_model_name)
+                        os.makedirs(self._model_save_dir, exist_ok=True)
+                        self._saver.save(self._sess, snapshot_model_path, global_step=epoch)
+                    else:
+                        best_model = sorted(best_model)
+                        if val_epoch_mious > best_model[0]:
+                            best_model[0] = val_epoch_mious
+                            best_model = sorted(best_model)
+                            snapshot_model_name = 'cityscapes_val_miou={:.4f}.ckpt'.format(val_epoch_mious)
+                            snapshot_model_path = ops.join(self._model_save_dir, snapshot_model_name)
+                            os.makedirs(self._model_save_dir, exist_ok=True)
+                            self._saver.save(self._sess, snapshot_model_path, global_step=epoch)
+                        else:
+                            pass
                 else:
-                    snapshot_model_name = 'cityscapes_train_loss={:.4f}.ckpt'.format(train_epoch_losses)
+                    snapshot_model_name = 'cityscapes_val_loss={:.4f}.ckpt'.format(val_epoch_losses)
                     snapshot_model_path = ops.join(self._model_save_dir, snapshot_model_name)
                     os.makedirs(self._model_save_dir, exist_ok=True)
                     self._saver.save(self._sess, snapshot_model_path, global_step=epoch)
@@ -389,20 +489,25 @@ class BiseNetV2CityScapesMultiTrainer(object):
             log_time = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time()))
             if self._enable_miou and epoch % self._record_miou_epoch == 0:
                 LOG.info(
-                    '=> Epoch: {:d} Time: {:s} Train loss: {:.5f} '
-                    'Train miou: {:.5f} ...'.format(
+                    '=> Epoch: {:d} Time: {:s} Train loss: {:.5f} Train miou: {:.5f} '
+                    'Val loss: {:.5f} Val miou: {:.5f}...'.format(
                         epoch, log_time,
                         train_epoch_losses,
                         train_epoch_mious,
+                        val_epoch_losses,
+                        val_epoch_mious
                     )
                 )
             else:
                 LOG.info(
-                    '=> Epoch: {:d} Time: {:s} Train loss: {:.5f} ...'.format(
+                    '=> Epoch: {:d} Time: {:s} Train loss: {:.5f} Val loss: {:.5f}...'.format(
                         epoch, log_time,
-                        train_epoch_losses
+                        train_epoch_losses,
+                        val_epoch_losses
                     )
                 )
+        if self._enable_miou:
+            LOG.info('Best model\'s val mious are: {}'.format(best_model))
         LOG.info('Complete training process good luck!!')
 
         return

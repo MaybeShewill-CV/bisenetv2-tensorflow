@@ -190,7 +190,8 @@ class _CityScapesTfReader(object):
         self._dataset_dir = CFG.DATASET.DATA_DIR
         self._tfrecords_dir = ops.join(self._dataset_dir, 'tfrecords')
         self._epoch_nums = CFG.TRAIN.EPOCH_NUMS
-        self._batch_size = CFG.TRAIN.BATCH_SIZE
+        self._train_batch_size = CFG.TRAIN.BATCH_SIZE
+        self._val_batch_size = CFG.TRAIN.VAL_BATCH_SIZE
         assert ops.exists(self._tfrecords_dir)
 
         self._dataset_flags = dataset_flag.lower()
@@ -207,8 +208,12 @@ class _CityScapesTfReader(object):
 
         sample_counts = 0
         sample_counts += sum(1 for _ in tf.python_io.tf_record_iterator(tfrecords_file_paths))
-
-        num_batchs = int(np.ceil(sample_counts / self._batch_size))
+        if self._dataset_flags == 'train':
+            num_batchs = int(np.ceil(sample_counts / self._train_batch_size))
+        elif self._dataset_flags == 'val':
+            num_batchs = int(np.ceil(sample_counts / self._val_batch_size))
+        else:
+            raise ValueError('Wrong dataset flags')
         return num_batchs
 
     def next_batch(self, batch_size):
@@ -236,22 +241,24 @@ class _CityScapesTfReader(object):
                     map_func=aug.decode,
                     num_parallel_calls=CFG.DATASET.CPU_MULTI_PROCESS_NUMS
                 )
-                if self._dataset_flags != 'test':
+                if self._dataset_flags == 'train':
                     dataset = dataset.map(
-                        map_func=aug.preprocess_image,
+                        map_func=aug.preprocess_image_for_train,
                         num_parallel_calls=CFG.DATASET.CPU_MULTI_PROCESS_NUMS
                     )
-                else:
-                    pass
+                elif self._dataset_flags == 'val':
+                    dataset = dataset.map(
+                        map_func=aug.preprocess_image_for_val,
+                        num_parallel_calls=CFG.DATASET.CPU_MULTI_PROCESS_NUMS
+                    )
 
                 # The shuffle transformation uses a finite-sized buffer to shuffle elements
                 # in memory. The parameter is the number of elements in the buffer. For
                 # completely uniform shuffling, set the parameter to be the same as the
                 # number of elements in the dataset.
-                if self._dataset_flags != 'test':
-                    dataset = dataset.shuffle(buffer_size=512)
-                    # repeat num epochs
-                    dataset = dataset.repeat(self._epoch_nums)
+                dataset = dataset.shuffle(buffer_size=512)
+                # repeat num epochs
+                dataset = dataset.repeat(self._epoch_nums)
 
                 dataset = dataset.batch(batch_size=batch_size, drop_remainder=True)
                 dataset = dataset.prefetch(buffer_size=batch_size * 16)
@@ -342,7 +349,7 @@ if __name__ == '__main__':
     import time
 
     io = CityScapesTfIO()
-    src_images, label_images = io.train_dataset_reader.next_batch(batch_size=8)
+    src_images, label_images = io.val_dataset_reader.next_batch(batch_size=4)
     relu_ret = tf.nn.relu(src_images)
 
     count = 1
