@@ -55,10 +55,10 @@ TRAIN:
     SNAPSHOT_EPOCH: 8
     BATCH_SIZE: 16
     VAL_BATCH_SIZE: 4
-    EPOCH_NUMS: 1025
+    EPOCH_NUMS: 905
     WARM_UP:
         ENABLE: True
-        EPOCH_NUMS: 16
+        EPOCH_NUMS: 8
     FREEZE_BN:
         ENABLE: False
     COMPUTE_MIOU:
