@@ -54,6 +54,7 @@ TRAIN:
         SNAPSHOT_PATH: ''
     SNAPSHOT_EPOCH: 8
     BATCH_SIZE: 16
+    VAL_BATCH_SIZE: 4
     EPOCH_NUMS: 1025
     WARM_UP:
         ENABLE: True
@@ -76,6 +77,10 @@ SOLVER:
     WEIGHT_DECAY: 0.0005
     MOVING_AVE_DECAY: 0.9995
     LOSS_TYPE: 'cross_entropy'
+    OHEM:
+        ENABLE: True
+        SCORE_THRESH: 0.65
+        MIN_SAMPLE_NUMS: 262144
 GPU:
     GPU_MEMORY_FRACTION: 0.9
     TF_ALLOW_GROWTH: True
