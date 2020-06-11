@@ -251,3 +251,9 @@ BiseNet series are excellent work in my opinion. Really appreciate it.
 Please cite my repo 
 [bisenetv2-tensorflow](https://github.com/MaybeShewill-CV/bisenetv2-tensorflow) 
 if you use it.
+
+
+## Contact
+
+Scan the following QR to disscuss :)
+![qr](./data/source_image/qr.jpg)
