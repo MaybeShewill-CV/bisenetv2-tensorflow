@@ -229,8 +229,7 @@ The following result should be generated if nothing goes wrong.
 1) The origin paper can reach a miou of 73.4 on cityscapes 
 validation dataset which is outperformer than my implementation.
 I suspect the reason may be I did not use the standard synchronized
-bn in training procedure and I did not use OHEM while training.
-Sereval experiments was doing recently. I will upload new model 
+bn in training procedure. Sereval experiments was doing recently. I will upload new model 
 if I'm able to train a better one.
 2) Sereval params mentioned in the paper was not very clear for me.
 Here is a brief look at my confusion https://github.com/ycszen/BiSeNet/issues/2
