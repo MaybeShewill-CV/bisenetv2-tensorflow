@@ -243,6 +243,7 @@ Finally thanks to the origin author [ycszen](https://github.com/ycszen).
 BiseNet series are excellent work in my opinion. Really appreciate it.
 
 ## TODO
+- [x] Add OHEM module
 - [ ] Search better hyperparameter for cityscapes dataset.
 - [ ] Do experiments on other dataset such as CamVid etc.
 - [ ] Organize the code and release bisenetv1 training scripts and pretrained model.
