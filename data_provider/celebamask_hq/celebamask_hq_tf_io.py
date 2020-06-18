@@ -3,7 +3,7 @@
 # @Time    : 2020/5/8 下午7:47
 # @Author  : MaybeShewill-CV
 # @Site    : https://github.com/MaybeShewill-CV/bisenetv2-tensorflow
-# @File    : cityscapes_tf_io.py
+# @File    : celebamask_hq_tf_io.py
 # @IDE: PyCharm
 """
 Celebamaskhq tensorflow dataset io module

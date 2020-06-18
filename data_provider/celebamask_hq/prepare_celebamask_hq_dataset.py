@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 # @Time    : 2020/6/18 下午2:52
-# @Author  : LuoYao
-# @Site    : ICode
+# @Author  : MaybeShewill-CV
+# @Site    : https://github.com/MaybeShewill-CV/bisenetv2-tensorflow
 # @File    : prepare_celebamask_hq_dataset.py
 # @IDE: PyCharm
 """
