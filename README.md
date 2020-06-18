@@ -53,7 +53,7 @@ tensorrt.
 You can test a single image on the trained model as follows
 
 ```
-python tools/test_bisenetv2_cityscapes.py --weights_path ./model/cityscapes/bisenetv2/cityscapes.ckpt 
+python tools/cityscapes/test_bisenetv2_cityscapes.py --weights_path ./model/cityscapes/bisenetv2/cityscapes.ckpt 
 --src_image_path ./data/test_image/test_01.png
 ```
 
@@ -87,7 +87,7 @@ The results are as follows:
 If you want to evaluate the model on the whole cityscapes 
 validation dataset you may call
 ```
-python tools/evaluate_bisenetv2_cityscapes.py 
+python tools/cityscapes/evaluate_bisenetv2_cityscapes.py 
 --pb_file_path ./checkpoint/bisenetv2_cityscapes_frozen.pb
 --dataset_dir ./data/example_dataset/cityscapes
 ```
@@ -107,7 +107,7 @@ in the evaluation script.
 
 The instruction can be reached by
 ```
-python tools/evaluate_bisenetv2_cityscapes.py --help
+python tools/cityscapes/evaluate_bisenetv2_cityscapes.py --help
 ```
 
 ## Train model from scratch
@@ -129,14 +129,14 @@ dataset dir path
 Then sse the script here to generate the tensorflow records file
 
 ```
-python tools/make_cityscapes_tfrecords.py
+python tools/cityscapes/make_cityscapes_tfrecords.py
 ```
 
 #### Train model
 You may start your training procedure simply by
 
 ```
-CUDA_VISIBLE_DEVICES="0, 1, 2, 3" python tools/train_bisenetv2_cityscapes.py
+CUDA_VISIBLE_DEVICES="0, 1, 2, 3" python tools/cityscapes/train_bisenetv2_cityscapes.py
 ```
 
 By default multi gpu training mode was used here. You may read 
