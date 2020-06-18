@@ -195,7 +195,7 @@ I have uploaded a frozen tensorflow pb model in ./checkpoint folder.
 You may run follows to freeze your own trainned models
 
 ```
-python tools/freeze_bisenetv2_model.py --weights_path ./model/cityscapes/bisenetv2/cityscapes.ckpt
+python tools/common/freeze_bisenetv2_model.py --weights_path ./model/cityscapes/bisenetv2/cityscapes.ckpt
 ```
 
 Once you have frozen pb model locally you may run following command
@@ -209,7 +209,7 @@ After all was done mentioned above you may simply run following
 command to time profile the model's performance.
 
 ```
-python tools/timeprofile_bisenetv2.py --input_image_path ./data/test_image/test_01.png
+python tools/common/timeprofile_bisenetv2.py --input_image_path ./data/test_image/test_01.png
 ```
 
 Basically the script do such few things:
