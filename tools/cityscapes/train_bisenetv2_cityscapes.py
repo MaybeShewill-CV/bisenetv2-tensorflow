@@ -13,7 +13,7 @@ from trainner.cityscapes import cityscapes_bisenetv2_single_gpu_trainner as sing
 from local_utils.log_util import init_logger
 from local_utils.config_utils import parse_config_utils
 
-LOG = init_logger.get_logger('train_bisenetv2')
+LOG = init_logger.get_logger('train_bisenetv2_cityscapes')
 CFG = parse_config_utils.cityscapes_cfg_v2
 
 

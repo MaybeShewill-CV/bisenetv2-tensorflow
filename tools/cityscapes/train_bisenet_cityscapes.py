@@ -11,7 +11,7 @@ Train bisenet on cityscapes dataset
 from trainner.cityscapes import cityscapes_bisenet_trainner as trainner
 from local_utils.log_util import init_logger
 
-LOG = init_logger.get_logger('train_bisenet')
+LOG = init_logger.get_logger('train_bisenet_cityscapes')
 
 
 def train_model():

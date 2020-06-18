@@ -13,7 +13,7 @@ from trainner.celebamask_hq import celebamask_hq_bisenetv2_multi_gpu_trainner as
 from local_utils.log_util import init_logger
 from local_utils.config_utils import parse_config_utils
 
-LOG = init_logger.get_logger('train_bisenetv2')
+LOG = init_logger.get_logger('train_bisenetv2_celebamaskhq')
 CFG = parse_config_utils.cityscapes_cfg_v2
 
 
