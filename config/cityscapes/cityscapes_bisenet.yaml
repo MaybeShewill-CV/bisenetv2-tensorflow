@@ -1,0 +1,75 @@
+AUG:
+    RESIZE_METHOD: 'stepscaling' # choice unpadding rangescaling and stepscaling
+    FIX_RESIZE_SIZE: [720, 720] # (width, height), for unpadding
+    INF_RESIZE_VALUE: 500  # for rangescaling
+    MAX_RESIZE_VALUE: 600  # for rangescaling
+    MIN_RESIZE_VALUE: 400  # for rangescaling
+    MAX_SCALE_FACTOR: 2.0  # for stepscaling
+    MIN_SCALE_FACTOR: 0.75  # for stepscaling
+    SCALE_STEP_SIZE: 0.25  # for stepscaling
+    TRAIN_CROP_SIZE: [640, 640]  # crop size for training
+    EVAL_CROP_SIZE: [640, 640]  # crop size for evaluating
+    MIRROR: True
+    FLIP: True
+    FLIP_RATIO: 0.5
+    RICH_CROP:
+        ENABLE: False
+        BLUR: True
+        BLUR_RATIO: 0.2
+        MAX_ROTATION: 15
+        MIN_AREA_RATIO: 0.5
+        ASPECT_RATIO: 0.5
+        BRIGHTNESS_JITTER_RATIO: 0.5
+        CONTRAST_JITTER_RATIO: 0.5
+        SATURATION_JITTER_RATIO: 0.5
+DATASET:
+    DATA_DIR: '/PATH/IMAGE_SCENE_SEGMENTATION/CITYSPACES'
+    IMAGE_TYPE: 'rgb'  # choice rgb or rgba
+    NUM_CLASSES: 19
+    TEST_FILE_LIST: '/PATH/IMAGE_SCENE_SEGMENTATION/CITYSPACES/image_file_index/test.txt'
+    TRAIN_FILE_LIST: '/PATH/IMAGE_SCENE_SEGMENTATION/CITYSPACES/image_file_index/train.txt'
+    VAL_FILE_LIST: '/PATH/IMAGE_SCENE_SEGMENTATION/CITYSPACES/image_file_index/val.txt'
+    IGNORE_INDEX: 255
+    PADDING_VALUE: [255, 255, 255]
+    MEAN_VALUE: [104.00698793, 116.66876762, 122.67891434]
+FREEZE:
+    MODEL_FILENAME: 'model'
+    PARAMS_FILENAME: 'params'
+MODEL:
+    MODEL_NAME: 'bisenet'
+    BISENET:
+        DEPTH_MULTIPLIER: 1
+        LAYERS: 39
+        USE_SPATIAL_CNN: False
+TEST:
+    TEST_MODEL: 'model/cityscapes_bisenet/final'
+TRAIN:
+    MODEL_SAVE_DIR: 'model/cityscapes/'
+    TBOARD_SAVE_DIR: 'tboard/cityscapes/'
+    MODEL_PARAMS_CONFIG_FILE_NAME: "model_train_config.json"
+    RESTORE_FROM_SNAPSHOT:
+        ENABLE: False
+        SNAPSHOT_PATH: ''
+    SNAPSHOT_EPOCH: 8
+    BATCH_SIZE: 4
+    EPOCH_NUMS: 1280
+    WARM_UP:
+        ENABLE: False
+        EPOCH_NUMS: 5
+    FREEZE_BN:
+        ENABLE: False
+SOLVER:
+    LR: 0.025
+    LR_POLICY: 'poly'
+    LR_POLYNOMIAL_POWER: 0.9
+    OPTIMIZER: 'sgd'
+    MOMENTUM: 0.9
+    WEIGHT_DECAY: 0.0001
+    MOVING_AVE_DECAY: 0.9995
+    LOSS_TYPE: 'cross_entropy'
+GPU:
+    GPU_MEMORY_FRACTION: 0.95
+    TF_ALLOW_GROWTH: True
+LOG:
+    SAVE_DIR: './log'
+    LEVEL: INFO

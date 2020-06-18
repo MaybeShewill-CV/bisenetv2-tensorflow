@@ -525,7 +525,7 @@ if __name__ == '__main__':
     source_label_image = tf.image.decode_png(source_label_image, channels=0)
     source_label_image.set_shape(shape=[1024, 2048, 1])
 
-    preprocess_src_img, preprocess_label_img = preprocess_image(
+    preprocess_src_img, preprocess_label_img = preprocess_image_for_train(
         src_image=source_image,
         label_image=source_label_image
     )
