@@ -224,6 +224,7 @@ class Config(dict):
 
 cityscapes_cfg = Config(config_path='./config/cityscapes/cityscapes_bisenet.yaml')
 cityscapes_cfg_v2 = Config(config_path='./config/cityscapes/cityscapes_bisenetv2.yaml')
+celebamask_hq_cfg = Config(config_path='./config/celebamask_hq/celebamask_hq_bisenetv2.yaml')
 
 
 if __name__ == '__main__':

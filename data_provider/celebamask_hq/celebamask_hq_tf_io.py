@@ -6,7 +6,7 @@
 # @File    : cityscapes_tf_io.py
 # @IDE: PyCharm
 """
-Cityscapes tensorflow dataset io module
+Celebamaskhq tensorflow dataset io module
 """
 import os
 import os.path as ops
@@ -18,9 +18,9 @@ import numpy as np
 import loguru
 
 from local_utils.config_utils import parse_config_utils
-from local_utils.augment_utils.cityscapes import augmentation_tf_utils as aug
+from local_utils.augment_utils.celebamask_hq import augmentation_tf_utils as aug
 
-CFG = parse_config_utils.cityscapes_cfg_v2
+CFG = parse_config_utils.celebamask_hq_cfg
 LOG = loguru.logger
 
 
@@ -47,7 +47,7 @@ def _bytes_list_feature(values):
     return tf.train.Feature(bytes_list=tf.train.BytesList(value=[_norm2bytes(values)]))
 
 
-class _CityScapesTfWriter(object):
+class _CelebamaskhqTfWriter(object):
     """
 
     """
@@ -158,7 +158,7 @@ class _CityScapesTfWriter(object):
         :return:
         """
         # generate training tfrecords
-        train_tfrecords_file_name = 'cityscapes_train.tfrecords'
+        train_tfrecords_file_name = 'celebamask_hq_train.tfrecords'
         train_tfrecords_file_path = ops.join(self._tfrecords_dir, train_tfrecords_file_name)
         self._write_example_tfrecords(
             sample_image_paths=self._train_image_paths,
@@ -166,7 +166,7 @@ class _CityScapesTfWriter(object):
         )
 
         # generate validation tfrecords
-        val_tfrecords_file_name = 'cityscapes_val.tfrecords'
+        val_tfrecords_file_name = 'celebamask_hq_val.tfrecords'
         val_tfrecords_file_path = ops.join(self._tfrecords_dir, val_tfrecords_file_name)
         self._write_example_tfrecords(
             sample_image_paths=self._val_image_paths,
@@ -178,7 +178,7 @@ class _CityScapesTfWriter(object):
         return
 
 
-class _CityScapesTfReader(object):
+class _CelebamaskhqTfReader(object):
     """
 
     """
@@ -203,7 +203,7 @@ class _CityScapesTfReader(object):
 
         :return:
         """
-        tfrecords_file_paths = ops.join(self._tfrecords_dir, 'cityscapes_{:s}.tfrecords'.format(self._dataset_flags))
+        tfrecords_file_paths = ops.join(self._tfrecords_dir, 'celebamask_hq_{:s}.tfrecords'.format(self._dataset_flags))
         assert ops.exists(tfrecords_file_paths), '{:s} not exist'.format(tfrecords_file_paths)
 
         sample_counts = 0
@@ -225,7 +225,7 @@ class _CityScapesTfReader(object):
                     * labels is an int32 tensor with shape [batch_size] with the true label,
                       a number in the range [0, CLASS_NUMS).
         """
-        tfrecords_file_paths = ops.join(self._tfrecords_dir, 'cityscapes_{:s}.tfrecords'.format(self._dataset_flags))
+        tfrecords_file_paths = ops.join(self._tfrecords_dir, 'celebamask_hq_{:s}.tfrecords'.format(self._dataset_flags))
         assert ops.exists(tfrecords_file_paths), '{:s} not exist'.format(tfrecords_file_paths)
 
         with tf.device('/cpu:0'):
@@ -268,7 +268,7 @@ class _CityScapesTfReader(object):
         return iterator.get_next(name='{:s}_IteratorGetNext'.format(self._dataset_flags))
 
 
-class CityScapesTfIO(object):
+class CelebamaskhqTfIO(object):
     """
 
     """
@@ -276,9 +276,9 @@ class CityScapesTfIO(object):
         """
 
         """
-        self._writer = _CityScapesTfWriter()
-        self._train_dataset_reader = _CityScapesTfReader(dataset_flag='train')
-        self._val_dataset_reader = _CityScapesTfReader(dataset_flag='val')
+        self._writer = _CelebamaskhqTfWriter()
+        self._train_dataset_reader = _CelebamaskhqTfReader(dataset_flag='train')
+        self._val_dataset_reader = _CelebamaskhqTfReader(dataset_flag='val')
 
     @property
     def writer(self):
@@ -309,14 +309,14 @@ if __name__ == '__main__':
     """
     test code
     """
-    LABEL_CONTOURS = [(0, 0, 0),  # 0=road
-                      # 1=sidewalk, 2=building, 3=wall, 4=fence, 5=pole
+    LABEL_CONTOURS = [(0, 0, 0),  # 0=background
+                      # 1=skin, 2=l_brow, 3=r_brow, 4=l_eye, 5=r_eye
                       (128, 0, 0), (0, 128, 0), (128, 128, 0), (0, 0, 128), (128, 0, 128),
-                      # 6=traffic light, 7=traffic sign, 8=vegetation, 9=terrain, 10=sky
+                      # 6=eye_g, 7=l_ear, 8=r_ear, 9=ear_r, 10=nose
                       (0, 128, 128), (128, 128, 128), (64, 0, 0), (192, 0, 0), (64, 128, 0),
-                      # 11=person, 12=rider, 13=car, 14=truck, 15=bus
+                      # 11=mouth, 12=u_lip, 13=l_lip, 14=neck, 15=neck_l
                       (192, 128, 0), (64, 0, 128), (192, 0, 128), (64, 128, 128), (192, 128, 128),
-                      # 16=train, 17=motorcycle, 18=bicycle
+                      # 16=cloth, 17=hair, 18=hat
                       (0, 64, 0), (128, 64, 0), (0, 192, 0)]
 
 
@@ -348,8 +348,8 @@ if __name__ == '__main__':
     import matplotlib.pyplot as plt
     import time
 
-    io = CityScapesTfIO()
-    src_images, label_images = io.val_dataset_reader.next_batch(batch_size=4)
+    io = CelebamaskhqTfIO()
+    src_images, label_images = io.train_dataset_reader.next_batch(batch_size=4)
     relu_ret = tf.nn.relu(src_images)
 
     count = 1
@@ -362,6 +362,7 @@ if __name__ == '__main__':
                 count += 1
                 src_image = np.array((images[0] + 1.0) * 127.5, dtype=np.uint8)
                 print(labels[0].shape)
+                print(src_image.shape)
                 color_mask_image = decode_inference_prediction(mask=labels[0])
 
                 plt.figure('src')

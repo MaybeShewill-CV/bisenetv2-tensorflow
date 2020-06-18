@@ -18,7 +18,7 @@ import tensorflow as tf
 from sklearn.metrics import confusion_matrix
 
 from local_utils.config_utils import parse_config_utils
-from local_utils.augment_utils import augmentation_utils as aug
+from local_utils.augment_utils.cityscapes import augmentation_utils as aug
 
 CFG = parse_config_utils.cityscapes_cfg_v2
 

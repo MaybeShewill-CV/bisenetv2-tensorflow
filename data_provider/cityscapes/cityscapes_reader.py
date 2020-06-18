@@ -16,7 +16,7 @@ import tensorflow as tf
 import tqdm
 from PIL import Image
 
-from local_utils.augment_utils import augmentation_utils as aug
+from local_utils.augment_utils.cityscapes import augmentation_utils as aug
 from local_utils.config_utils import parse_config_utils
 
 CFG = parse_config_utils.cityscapes_cfg_v2
