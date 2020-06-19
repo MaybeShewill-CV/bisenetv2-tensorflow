@@ -195,7 +195,8 @@ I have uploaded a frozen tensorflow pb model in ./checkpoint folder.
 You may run follows to freeze your own trainned models
 
 ```
-python tools/common/freeze_bisenetv2_model.py --weights_path ./model/cityscapes/bisenetv2/cityscapes.ckpt
+python tools/cityscapes/freeze_cityscapes_bisenetv2_model.py 
+--weights_path ./model/cityscapes/bisenetv2/cityscapes.ckpt
 ```
 
 Once you have frozen pb model locally you may run following command
@@ -209,7 +210,8 @@ After all was done mentioned above you may simply run following
 command to time profile the model's performance.
 
 ```
-python tools/common/timeprofile_bisenetv2.py --input_image_path ./data/test_image/test_01.png
+python tools/cityscapes/timeprofile_cityscapes_bisenetv2.py 
+--input_image_path ./data/test_image/test_01.png
 ```
 
 Basically the script do such few things:
@@ -245,7 +247,7 @@ BiseNet series are excellent work in my opinion. Really appreciate it.
 - [x] Add OHEM module
 - [ ] Search better hyperparameter for cityscapes dataset.
 - [ ] Do experiments on other dataset such as CamVid etc.
-- [ ] Organize the code and release bisenetv1 training scripts and pretrained model.
+- [x] Organize the code and release bisenetv1 training scripts and pretrained model.
 
 ## Acknowledgement
 Please cite my repo 
