@@ -256,12 +256,12 @@ class _CelebamaskhqTfReader(object):
                 # in memory. The parameter is the number of elements in the buffer. For
                 # completely uniform shuffling, set the parameter to be the same as the
                 # number of elements in the dataset.
-                dataset = dataset.shuffle(buffer_size=512)
+                dataset = dataset.shuffle(buffer_size=256)
                 # repeat num epochs
                 dataset = dataset.repeat(self._epoch_nums)
 
                 dataset = dataset.batch(batch_size=batch_size, drop_remainder=True)
-                dataset = dataset.prefetch(buffer_size=batch_size * 16)
+                dataset = dataset.prefetch(buffer_size=batch_size * 8)
 
                 iterator = dataset.make_one_shot_iterator()
 
