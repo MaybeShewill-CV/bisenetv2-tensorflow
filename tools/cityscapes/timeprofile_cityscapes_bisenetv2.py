@@ -3,7 +3,7 @@
 # @Time    : 2020/4/10 下午5:55
 # @Author  : MaybeShewill-CV
 # @Site    : https://github.com/MaybeShewill-CV/bisenetv2-tensorflow
-# @File    : timeprofile_bisenetv2.py
+# @File    : timeprofile_cityscapes_bisenetv2.py
 # @IDE: PyCharm
 """
 Test tensorrt bisenetv2 inference time consuming

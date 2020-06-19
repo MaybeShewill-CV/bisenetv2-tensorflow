@@ -3,7 +3,7 @@
 # @Time    : 2020/1/15 上午10:49
 # @Author  : MaybeShewill-CV
 # @Site    : https://github.com/MaybeShewill-CV/bisenetv2-tensorflow
-# @File    : freeze_bisenetv2_model.py
+# @File    : freeze_celebamaskhq_bisenetv2_model.py
 # @IDE: PyCharm
 """
 Freeze bisenetv2 model
@@ -15,6 +15,9 @@ from tensorflow.python.framework import graph_util
 from tensorflow.python.tools import optimize_for_inference_lib
 
 from bisenet_model import bisenet_v2
+from local_utils.config_utils import parse_config_utils
+
+CFG = parse_config_utils.celebamask_hq_cfg
 
 
 def init_args():
@@ -41,7 +44,7 @@ def load_graph_from_ckpt_file(weights_path):
     """
     # construct compute graph
     input_tensor = tf.placeholder(dtype=tf.float32, shape=[1, 512, 1024, 3], name='input_tensor')
-    net = bisenet_v2.BiseNetV2(phase='test')
+    net = bisenet_v2.BiseNetV2(phase='test', cfg=CFG)
     prediction = net.inference(
         input_tensor=input_tensor,
         name='BiseNetV2',

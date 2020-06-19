@@ -13,9 +13,6 @@ import collections
 import tensorflow as tf
 
 from bisenet_model import cnn_basenet
-from local_utils.config_utils import parse_config_utils
-
-CFG = parse_config_utils.cityscapes_cfg_v2
 
 
 class _StemBlock(cnn_basenet.CNNBaseModel):
@@ -723,7 +720,7 @@ class BiseNetV2(cnn_basenet.CNNBaseModel):
     """
     implementation of bisenet v2
     """
-    def __init__(self, phase):
+    def __init__(self, phase, cfg):
         """
 
         """
@@ -732,16 +729,16 @@ class BiseNetV2(cnn_basenet.CNNBaseModel):
         self._is_training = self._is_net_for_training()
 
         # set model hyper params
-        self._class_nums = CFG.DATASET.NUM_CLASSES
-        self._weights_decay = CFG.SOLVER.WEIGHT_DECAY
-        self._loss_type = CFG.SOLVER.LOSS_TYPE
-        self._enable_ohem = CFG.SOLVER.OHEM.ENABLE
+        self._class_nums = cfg.DATASET.NUM_CLASSES
+        self._weights_decay = cfg.SOLVER.WEIGHT_DECAY
+        self._loss_type = cfg.SOLVER.LOSS_TYPE
+        self._enable_ohem = cfg.SOLVER.OHEM.ENABLE
         if self._enable_ohem:
-            self._ohem_score_thresh = CFG.SOLVER.OHEM.SCORE_THRESH
-            self._ohem_min_sample_nums = CFG.SOLVER.OHEM.MIN_SAMPLE_NUMS
-        self._ge_expand_ratio = CFG.MODEL.BISENETV2.GE_EXPAND_RATIO
-        self._semantic_channel_ratio = CFG.MODEL.BISENETV2.SEMANTIC_CHANNEL_LAMBDA
-        self._seg_head_ratio = CFG.MODEL.BISENETV2.SEGHEAD_CHANNEL_EXPAND_RATIO
+            self._ohem_score_thresh = cfg.SOLVER.OHEM.SCORE_THRESH
+            self._ohem_min_sample_nums = cfg.SOLVER.OHEM.MIN_SAMPLE_NUMS
+        self._ge_expand_ratio = cfg.MODEL.BISENETV2.GE_EXPAND_RATIO
+        self._semantic_channel_ratio = cfg.MODEL.BISENETV2.SEMANTIC_CHANNEL_LAMBDA
+        self._seg_head_ratio = cfg.MODEL.BISENETV2.SEGHEAD_CHANNEL_EXPAND_RATIO
 
         # set module used in bisenetv2
         self._se_block = _StemBlock(phase=phase)
@@ -1175,6 +1172,10 @@ if __name__ == '__main__':
     """
     import time
 
+    from local_utils.config_utils import parse_config_utils
+
+    CFG = parse_config_utils.cityscapes_cfg_v2
+
     time_comsuming_loops = 5
     test_input = tf.random.normal(shape=[1, 512, 1024, 3], dtype=tf.float32)
     test_label = tf.random.uniform(shape=[1, 512, 1024], minval=0, maxval=6, dtype=tf.int32)
@@ -1226,7 +1227,7 @@ if __name__ == '__main__':
         classes_nums=9
     )
 
-    bisenetv2 = BiseNetV2(phase='train')
+    bisenetv2 = BiseNetV2(phase='train', cfg=CFG)
     bisenetv2_detail_branch_output = bisenetv2.build_detail_branch(
         input_tensor=test_input,
         name='detail_branch'

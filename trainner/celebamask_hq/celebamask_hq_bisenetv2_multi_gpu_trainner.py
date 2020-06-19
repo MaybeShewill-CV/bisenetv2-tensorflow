@@ -95,8 +95,8 @@ class BiseNetV2CelebamaskhqMultiTrainer(object):
             )
 
         # define model
-        self._model = bisenet_v2.BiseNetV2(phase='train')
-        self._val_model = bisenet_v2.BiseNetV2(phase='test')
+        self._model = bisenet_v2.BiseNetV2(phase='train', cfg=CFG)
+        self._val_model = bisenet_v2.BiseNetV2(phase='test', cfg=CFG)
 
         # define average container
         tower_grads = []

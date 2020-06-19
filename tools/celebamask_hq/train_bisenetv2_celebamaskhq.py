@@ -14,7 +14,7 @@ from local_utils.log_util import init_logger
 from local_utils.config_utils import parse_config_utils
 
 LOG = init_logger.get_logger('train_bisenetv2_celebamaskhq')
-CFG = parse_config_utils.cityscapes_cfg_v2
+CFG = parse_config_utils.celebamask_hq_cfg
 
 
 def train_model():

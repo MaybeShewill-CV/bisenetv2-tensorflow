@@ -83,7 +83,7 @@ class BiseNetV2CelebamaskhqTrainer(object):
             )
 
         # define model loss
-        self._model = bisenet_v2.BiseNetV2(phase='train')
+        self._model = bisenet_v2.BiseNetV2(phase='train', cfg=CFG)
         loss_set = self._model.compute_loss(
             input_tensor=self._input_src_image,
             label_tensor=self._input_label_image,

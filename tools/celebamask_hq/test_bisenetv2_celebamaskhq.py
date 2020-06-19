@@ -122,7 +122,7 @@ def test_bisenet_cityspaces(image_path, weights_path):
         shape=[1, input_tensor_size[1], input_tensor_size[0], 3],
         name='input_tensor'
     )
-    bisenet_model = bisenet_v2.BiseNetV2(phase='test')
+    bisenet_model = bisenet_v2.BiseNetV2(phase='test', cfg=CFG)
     prediction = bisenet_model.inference(
         input_tensor=input_tensor,
         name='BiseNetV2',
