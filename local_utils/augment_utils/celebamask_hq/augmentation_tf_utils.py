@@ -34,16 +34,16 @@ def decode(serialized_example):
 
     # decode gt image
     gt_image = tf.image.decode_png(features['gt_src_image_raw'], channels=3)
-    gt_image = tf.reshape(gt_image, shape=[CFG.AUG.TRAIN_CROP_SIZE[1] * 2, CFG.AUG.TRAIN_CROP_SIZE[0] * 2, 3])
+    gt_image = tf.reshape(gt_image, shape=[1024, 1024, 3])
     gt_image = tf.image.resize_bilinear(
         images=tf.expand_dims(gt_image, axis=0),
-        size=[CFG.AUG.TRAIN_CROP_SIZE[1] * 2, CFG.AUG.TRAIN_CROP_SIZE[0] * 2]
+        size=[CFG.AUG.TRAIN_CROP_SIZE[1], CFG.AUG.TRAIN_CROP_SIZE[0]]
     )
     gt_image = tf.squeeze(gt_image, axis=0)
 
     # decode gt binary image
     gt_binary_image = tf.image.decode_png(features['gt_label_image_raw'], channels=1)
-    gt_binary_image = tf.reshape(gt_binary_image, shape=[CFG.AUG.TRAIN_CROP_SIZE[1], CFG.AUG.TRAIN_CROP_SIZE[0], 1])
+    gt_binary_image = tf.reshape(gt_binary_image, shape=[512, 512, 1])
 
     return gt_image, gt_binary_image
 
