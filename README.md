@@ -243,6 +243,27 @@ repo better.
 Finally thanks to the origin author [ycszen](https://github.com/ycszen).
 BiseNet series are excellent work in my opinion. Really appreciate it.
 
+## Experiments on other dataset
+
+Release a pretrainde model on [!CELEBAMASK_HQ](https://github.com/switchablenorms/CelebAMask-HQ)
+dataset. The model can reach 107 fps with a input image of (512, 512) size.
+
+Testing model script comes as follows:
+
+```
+python tools/celebamask_hq/test_bisenetv2_celebamaskhq.py 
+--weights_path PATH/TO/YOUR/CKPT/FILE 
+--src_image_path ./data/test_image/celebamask_hq/test_01.jpg
+```
+
+`Celebamask_hq Test Source Input Image`
+![celebamask_test_input](./data/test_image/celebamask_hq/test_01.jpg)
+
+`Celebamask_hq Test Result Image`
+
+![celebamask_test_result](./data/source_image/celebamask_hq_test_result.png)
+
+
 ## TODO
 - [x] Add OHEM module
 - [ ] Search better hyperparameter for cityscapes dataset.
@@ -253,7 +274,6 @@ BiseNet series are excellent work in my opinion. Really appreciate it.
 Please cite my repo 
 [bisenetv2-tensorflow](https://github.com/MaybeShewill-CV/bisenetv2-tensorflow) 
 if you use it.
-
 
 ## Contact
 
