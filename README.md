@@ -48,7 +48,8 @@ In this repo I uploaded a model trained on cityscapes dataset
 model can be found at ./model/cityscapes/bisenetv2. The pretrained
 model can reach a miou of 72.386 on cityscapes validation dataset.
 This implementation can reach a 83fps on GTX 1070 accelerated by
-tensorrt.
+tensorrt. The pretrained model can be downloaded 
+[here](https://www.dropbox.com/sh/zqq6mye9yjko9tx/AACidyM0yyHY8XnTJYTxRnqMa?dl=0)
 
 You can test a single image on the trained model as follows
 
@@ -247,6 +248,8 @@ BiseNet series are excellent work in my opinion. Really appreciate it.
 
 Release a pretrainde model on [!CELEBAMASK_HQ](https://github.com/switchablenorms/CelebAMask-HQ)
 dataset. The model can reach 107 fps with a input image of (512, 512) size.
+The pretrained mode can be downloaded 
+[here](https://www.dropbox.com/sh/0iisy23j4j6d1hj/AABm3fho2glNA7TWnvD7kK2oa?dl=0)
 
 Testing model script comes as follows:
 
