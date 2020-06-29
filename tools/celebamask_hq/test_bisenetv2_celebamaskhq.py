@@ -107,7 +107,7 @@ def compute_iou(y_pred, y_true, num_classes):
     return np.mean(iou)
 
 
-def test_bisenet_cityspaces(image_path, weights_path):
+def test_bisenet_celebamaskhq(image_path, weights_path):
     """
 
     :param image_path:
@@ -188,7 +188,7 @@ if __name__ == '__main__':
     """
     args = init_args()
 
-    test_bisenet_cityspaces(
+    test_bisenet_celebamaskhq(
         image_path=args.src_image_path,
         weights_path=args.weights_path
     )
