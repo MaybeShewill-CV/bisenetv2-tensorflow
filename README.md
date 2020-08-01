@@ -241,12 +241,9 @@ If you have any ideas about such problem mentioned above or you
 have futher update. You're welcomed to pull a request to make this
 repo better.
 
-Finally thanks to the origin author [ycszen](https://github.com/ycszen).
-BiseNet series are excellent work in my opinion. Really appreciate it.
-
 ## Experiments on other dataset
 
-Release a pretrainde model on [!CELEBAMASK_HQ](https://github.com/switchablenorms/CelebAMask-HQ)
+Release a pretrainde model on [CELEBAMASK_HQ](https://github.com/switchablenorms/CelebAMask-HQ)
 dataset. The model can reach 107 fps with a input image of (512, 512) size.
 The pretrained mode can be downloaded 
 [here](https://www.dropbox.com/sh/0iisy23j4j6d1hj/AABm3fho2glNA7TWnvD7kK2oa?dl=0)
@@ -274,6 +271,10 @@ python tools/celebamask_hq/test_bisenetv2_celebamaskhq.py
 - [x] Organize the code and release bisenetv1 training scripts and pretrained model.
 
 ## Acknowledgement
+
+Finally thanks to the origin author [ycszen](https://github.com/ycszen).
+BiseNet series are excellent work in my opinion. Really appreciate it.
+
 Please cite my repo 
 [bisenetv2-tensorflow](https://github.com/MaybeShewill-CV/bisenetv2-tensorflow) 
 if you use it.
