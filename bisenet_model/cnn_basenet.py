@@ -63,7 +63,7 @@ class CNNBaseModel(object):
                     else [1, 1, stride, stride]
 
             if w_init is None:
-                w_init = tf.contrib.layers.variance_scaling_initializer()
+                w_init = tf.variance_scaling_initializer()
                 # w_init = initializers.xavier_initializer()
             if b_init is None:
                 b_init = tf.constant_initializer()
@@ -110,7 +110,7 @@ class CNNBaseModel(object):
 
             depthwise_filter_shape = [kernel_size, kernel_size] + [in_channel, depth_multiplier]
             pointwise_filter_shape = [1, 1, in_channel * depth_multiplier, output_channels]
-            w_init = tf.contrib.layers.variance_scaling_initializer()
+            w_init = tf.variance_scaling_initializer()
 
             depthwise_filter = tf.get_variable(
                 name='depthwise_filter_w', shape=depthwise_filter_shape,
@@ -151,7 +151,7 @@ class CNNBaseModel(object):
             padding = padding.upper()
 
             depthwise_filter_shape = [kernel_size, kernel_size] + [in_channel, depth_multiplier]
-            w_init = tf.contrib.layers.variance_scaling_initializer()
+            w_init = tf.variance_scaling_initializer()
 
             depthwise_filter = tf.get_variable(
                 name='depthwise_filter_w', shape=depthwise_filter_shape,
@@ -373,7 +373,7 @@ class CNNBaseModel(object):
             inputdata = tf.reshape(inputdata, tf.stack([tf.shape(inputdata)[0], -1]))
 
         if w_init is None:
-            w_init = tf.contrib.layers.variance_scaling_initializer()
+            w_init = tf.variance_scaling_initializer()
         if b_init is None:
             b_init = tf.constant_initializer()
 
@@ -545,7 +545,7 @@ class CNNBaseModel(object):
             padding = padding.upper()
 
             if w_init is None:
-                w_init = tf.contrib.layers.variance_scaling_initializer()
+                w_init = tf.variance_scaling_initializer()
             if b_init is None:
                 b_init = tf.constant_initializer()
 
@@ -588,7 +588,7 @@ class CNNBaseModel(object):
                 filter_shape = [k_size, k_size] + [in_channel, out_dims]
 
             if w_init is None:
-                w_init = tf.contrib.layers.variance_scaling_initializer()
+                w_init = tf.variance_scaling_initializer()
             if b_init is None:
                 b_init = tf.constant_initializer()
 
