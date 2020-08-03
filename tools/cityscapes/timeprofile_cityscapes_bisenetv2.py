@@ -25,9 +25,9 @@ from local_utils.config_utils import parse_config_utils
 TRT_LOGGER = trt.Logger(trt.Logger.ERROR)
 CFG = parse_config_utils.cityscapes_cfg_v2
 
-PB_FILE_PATH = './checkpoint/bisenetv2_cityscapes_frozen.pb'
-ONNX_MODEL_FILE_PATH = './checkpoint/bisenetv2_cityscapes_frozen.onnx'
-TRT_ENGINE_FILE_PATH = './checkpoint/bisenetv2_cityscapes_frozen.trt'
+PB_FILE_PATH = './checkpoint/cityscapes/bisenetv2_cityscapes_frozen.pb'
+ONNX_MODEL_FILE_PATH = './checkpoint/cityscapes/bisenetv2_cityscapes_frozen.onnx'
+TRT_ENGINE_FILE_PATH = './checkpoint/cityscapes/bisenetv2_cityscapes_frozen.trt'
 
 LABEL_CONTOURS = [(0, 0, 0),  # 0=road
                   # 1=sidewalk, 2=building, 3=wall, 4=fence, 5=pole
