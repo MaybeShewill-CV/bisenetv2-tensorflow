@@ -10,7 +10,7 @@ The main network architecture is as follows:
 ![NetWork_Architecture](./data/source_image/network_architecture.png)
 
 ## Supporting the project
-[CRNN_Tensorflow](https://github.com/MaybeShewill-CV/bisenetv2-tensorflow) is being 
+[bisenetv2-tensorflow](https://github.com/MaybeShewill-CV/bisenetv2-tensorflow) is being 
 sponsored by the following tool; please help to support us by taking a look 
 and signing up to a free trial
 
