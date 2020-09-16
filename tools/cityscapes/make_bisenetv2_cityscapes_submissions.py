@@ -40,8 +40,7 @@ def init_args():
     """
     parser = argparse.ArgumentParser()
     parser.add_argument('-w', '--pb_file_path', type=str, help='The model weights file path')
-    parser.add_argument('-d', '--dataset_dir', type=str, help='The dataset dir',
-                        default='/media/baidu/DataRepo/IMAGE_SCENE_SEGMENTATION/CITYSPACES')
+    parser.add_argument('-d', '--dataset_dir', type=str, help='The dataset dir')
 
     return parser.parse_args()
 
