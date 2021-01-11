@@ -918,7 +918,7 @@ class BiseNetV2(cnn_basenet.CNNBaseModel):
         """
         dice loss is combined with bce loss here
         :param seg_logits:
-        :param label_tensor:
+        :param labels:
         :param class_nums:
         :param name:
         :return:
@@ -939,13 +939,13 @@ class BiseNetV2(cnn_basenet.CNNBaseModel):
 
         with tf.variable_scope(name_or_scope=name):
             # compute dice loss
-            local_label_tensor = tf.one_hot(label_tensor, depth=class_nums, dtype=tf.float32)
-            principal_loss_dice = __dice_loss(tf.nn.softmax(logits), local_label_tensor)
+            local_label_tensor = tf.one_hot(labels, depth=class_nums, dtype=tf.float32)
+            principal_loss_dice = __dice_loss(tf.nn.softmax(seg_logits), local_label_tensor)
             principal_loss_dice = tf.identity(principal_loss_dice, name='principal_loss_dice')
 
             # compute bce loss
             principal_loss_bce = tf.reduce_mean(
-                tf.nn.sparse_softmax_cross_entropy_with_logits(labels=label_tensor, logits=logits)
+                tf.nn.sparse_softmax_cross_entropy_with_logits(labels=labels, logits=seg_logits)
             )
             principal_loss_bce = tf.identity(principal_loss_bce, name='principal_loss_bce')
 
