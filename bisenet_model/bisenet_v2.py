@@ -914,6 +914,46 @@ class BiseNetV2(cnn_basenet.CNNBaseModel):
         return loss_value
 
     @classmethod
+    def _compute_dice_loss(cls, seg_logits, labels, class_nums, name):
+        """
+        dice loss is combined with bce loss here
+        :param seg_logits:
+        :param label_tensor:
+        :param class_nums:
+        :param name:
+        :return:
+        """
+        def __dice_loss(_y_pred, _y_true):
+            """
+
+            :param _y_pred:
+            :param _y_true:
+            :return:
+            """
+            _intersection = tf.reduce_sum(_y_true * _y_pred, axis=-1)
+            _l = tf.reduce_sum(_y_pred * _y_pred, axis=-1)
+            _r = tf.reduce_sum(_y_true * _y_true, axis=-1)
+            _dice = (2.0 * _intersection + 1e-5) / (_l + _r + 1e-5)
+            _dice = tf.reduce_mean(_dice)
+            return 1.0 - _dice
+
+        with tf.variable_scope(name_or_scope=name):
+            # compute dice loss
+            local_label_tensor = tf.one_hot(label_tensor, depth=class_nums, dtype=tf.float32)
+            principal_loss_dice = __dice_loss(tf.nn.softmax(logits), local_label_tensor)
+            principal_loss_dice = tf.identity(principal_loss_dice, name='principal_loss_dice')
+
+            # compute bce loss
+            principal_loss_bce = tf.reduce_mean(
+                tf.nn.sparse_softmax_cross_entropy_with_logits(labels=label_tensor, logits=logits)
+            )
+            principal_loss_bce = tf.identity(principal_loss_bce, name='principal_loss_bce')
+
+            total_loss = principal_loss_dice + principal_loss_bce
+            total_loss = tf.identity(total_loss, name='dice_loss')
+        return total_loss
+
+    @classmethod
     def _compute_l2_reg_loss(cls, var_list, weights_decay, name):
         """
 
@@ -1113,6 +1153,13 @@ class BiseNetV2(cnn_basenet.CNNBaseModel):
                             thresh=self._ohem_score_thresh,
                             n_min=self._ohem_min_sample_nums
                         )
+                elif self._loss_type == 'dice':
+                    segment_loss += self._compute_dice_loss(
+                        seg_logits=seg_logits,
+                        labels=label_tensor,
+                        class_nums=self._class_nums,
+                        name=loss_stage_name
+                    )
                 else:
                     raise NotImplementedError('Not supported loss of type: {:s}'.format(self._loss_type))
             l2_reg_loss = self._compute_l2_reg_loss(
