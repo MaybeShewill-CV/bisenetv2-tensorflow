@@ -9,10 +9,12 @@
 BiseNet V2 Model
 """
 import collections
+import time
 
 import tensorflow as tf
 
 from bisenet_model import cnn_basenet
+from local_utils.config_utils import parse_config_utils
 
 
 class _StemBlock(cnn_basenet.CNNBaseModel):
@@ -1166,16 +1168,11 @@ class BiseNetV2(cnn_basenet.CNNBaseModel):
         return segment_prediction
 
 
-if __name__ == '__main__':
+def test():
     """
-    test code
+    test func
+    :return:
     """
-    import time
-
-    from local_utils.config_utils import parse_config_utils
-
-    CFG = parse_config_utils.cityscapes_cfg_v2
-
     time_comsuming_loops = 5
     test_input = tf.random.normal(shape=[1, 512, 1024, 3], dtype=tf.float32)
     test_label = tf.random.uniform(shape=[1, 512, 1024], minval=0, maxval=6, dtype=tf.int32)
@@ -1227,7 +1224,7 @@ if __name__ == '__main__':
         classes_nums=9
     )
 
-    bisenetv2 = BiseNetV2(phase='train', cfg=CFG)
+    bisenetv2 = BiseNetV2(phase='train', cfg=parse_config_utils.cityscapes_cfg_v2)
     bisenetv2_detail_branch_output = bisenetv2.build_detail_branch(
         input_tensor=test_input,
         name='detail_branch'
@@ -1333,3 +1330,10 @@ if __name__ == '__main__':
             sess.run(logits)
         print('Bisenetv2 inference cost time: {:.5f}s'.format((time.time() - t_start) / time_comsuming_loops))
         print(logits)
+
+
+if __name__ == '__main__':
+    """
+    test code
+    """
+    test()
