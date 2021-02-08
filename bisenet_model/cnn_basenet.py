@@ -340,16 +340,26 @@ class CNNBaseModel(object):
         return tf.nn.batch_normalization(inputdata, mean, var, beta, gamma, epsilon, name=name)
 
     @staticmethod
-    def dropout(inputdata, keep_prob, noise_shape=None, name=None):
+    def dropout(input_tensor, keep_prob, is_training, noise_shape=None, name=None):
         """
 
         :param name:
-        :param inputdata:
+        :param input_tensor:
         :param keep_prob:
+        :param is_training:
         :param noise_shape:
         :return:
         """
-        return tf.nn.dropout(inputdata, keep_prob=keep_prob, noise_shape=noise_shape, name=name)
+
+        def f1():
+            return tf.nn.dropout(input_tensor, keep_prob=keep_prob, noise_shape=noise_shape, name=name)
+
+        def f2():
+            return input_tensor
+
+        with tf.variable_scope(name_or_scope=name):
+            output = tf.cond(is_training, f1, f2)
+        return output
 
     @staticmethod
     def fullyconnect(inputdata, out_dim, w_init=None, b_init=None,
