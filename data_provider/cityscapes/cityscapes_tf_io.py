@@ -222,7 +222,7 @@ class _CityScapesTfReader(object):
         :return: A tuple (images, labels), where:
                     * images is a float tensor with shape [batch_size, H, W, C]
                       in the range [-0.5, 0.5].
-                    * labels is an int32 tensor with shape [batch_size] with the true label,
+                    * labels is an int32 tensor with shape [batch_size, H, W, 1] with the label train id,
                       a number in the range [0, CLASS_NUMS).
         """
         tfrecords_file_paths = ops.join(self._tfrecords_dir, 'cityscapes_{:s}.tfrecords'.format(self._dataset_flags))
