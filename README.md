@@ -251,6 +251,9 @@ dataset. The model can reach 107 fps with a input image of (512, 512) size.
 The pre-trained model weights can be downloaded 
 [here](https://www.dropbox.com/sh/0iisy23j4j6d1hj/AABm3fho2glNA7TWnvD7kK2oa?dl=0)
 
+You may alse download pre-trained model on [BaiduNetDisk](https://pan.baidu.com/s/1ROQVg_nGm6OsqLLUtr_NKA) 
+https://pan.baidu.com/s/1ROQVg_nGm6OsqLLUtr_NKA and extract code is `tg75`
+
 Testing model script comes as follows:
 
 ```
