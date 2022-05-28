@@ -10,4 +10,4 @@ matplotlib
 Pillow
 scikit_learn
 PyYAML
-tensorflow_gpu==1.15.0
+tensorflow_gpu==2.7.2
