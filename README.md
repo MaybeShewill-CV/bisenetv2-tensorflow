@@ -12,7 +12,7 @@ The main network architecture is as follows:
 ## Installation
 This software has only been tested on ubuntu 16.04(x64), python3.5, 
 cuda-9.0, cudnn-7.0 with a GTX-1070 GPU. To use this repo you 
-need to install tensorflow-gpu 1.12.0 and other version of 
+need to install tensorflow-gpu 1.15.0 and other version of 
 tensorflow has not been tested but I think it will be able to 
 work properly if new version was installed in your local machine. Other required 
 package can be installed by
@@ -45,17 +45,20 @@ the file contains a pair of training samples.
 ## Test model
 In this repo I uploaded a model trained on cityscapes dataset 
 [CityScapes](https://www.cityscapes-dataset.com/). The pretrained
-model can be found at ./model/cityscapes/bisenetv2. The pretrained
+model can be found at ./weights/cityscapes/bisenetv2. The pretrained
 model can reach a miou of 72.386 on cityscapes validation dataset.
 This implementation can reach a 83fps on GTX 1070 accelerated by
 tensorrt. The pretrained model can be downloaded 
 [here](https://www.dropbox.com/sh/zqq6mye9yjko9tx/AACidyM0yyHY8XnTJYTxRnqMa?dl=0)
 
+You also download pretrained model on [BaiduNetDish](https://pan.baidu.com/s/14cjs6VrEDxIQ7DC0xrecaQ) here
+https://pan.baidu.com/s/14cjs6VrEDxIQ7DC0xrecaQ and extract code is `w8m6`
+
 You can test a single image on the trained model as follows
 
 ```
-python tools/cityscapes/test_bisenetv2_cityscapes.py --weights_path ./model/cityscapes/bisenetv2/cityscapes.ckpt 
---src_image_path ./data/test_image/test_01.png
+python tools/cityscapes/test_bisenetv2_cityscapes.py --weights_path ./weights/cityscapes/bisenetv2/cityscapes.ckpt 
+--src_image_path ./data/test_image/cityscapes/test_01.png
 ```
 
 The results are as follows:
@@ -197,7 +200,7 @@ You may run follows to freeze your own trainned models
 
 ```
 python tools/cityscapes/freeze_cityscapes_bisenetv2_model.py 
---weights_path ./model/cityscapes/bisenetv2/cityscapes.ckpt
+--weights_path ./weights/cityscapes/bisenetv2/cityscapes.ckpt
 ```
 
 Once you have frozen pb model locally you may run following command
@@ -234,7 +237,7 @@ validation dataset which is outperformer than my implementation.
 I suspect the reason may be I did not use the standard synchronized
 bn in training procedure. Sereval experiments was doing recently. I will upload new model 
 if I'm able to train a better one.
-2) Sereval params mentioned in the paper was not very clear for me.
+2) Several params mentioned in the paper was not very clear for me.
 Here is a brief look at my confusion https://github.com/ycszen/BiSeNet/issues/2
 
 If you have any ideas about such problem mentioned above or you
@@ -243,9 +246,9 @@ repo better.
 
 ## Experiments on other dataset
 
-Release a pretrainde model on [CELEBAMASK_HQ](https://github.com/switchablenorms/CelebAMask-HQ)
+Release a pre-trained model on [CELEBAMASK_HQ](https://github.com/switchablenorms/CelebAMask-HQ)
 dataset. The model can reach 107 fps with a input image of (512, 512) size.
-The pretrained mode can be downloaded 
+The pre-trained model weights can be downloaded 
 [here](https://www.dropbox.com/sh/0iisy23j4j6d1hj/AABm3fho2glNA7TWnvD7kK2oa?dl=0)
 
 Testing model script comes as follows:
