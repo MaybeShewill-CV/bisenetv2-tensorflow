@@ -269,6 +269,10 @@ python tools/celebamask_hq/test_bisenetv2_celebamaskhq.py
 
 ![celebamask_test_result](./data/source_image/celebamask_hq_test_result.png)
 
+## Status
+
+![Repobeats analytics image](https://repobeats.axiom.co/api/embed/0a10f74e3dcc4bb4e0a0c51a28f2b736e51c6161.svg "Repobeats analytics image")
+
 
 ## TODO
 - [x] Add OHEM module
