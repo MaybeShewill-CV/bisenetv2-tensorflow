@@ -30,7 +30,7 @@ if [ ${input_para_nums} != ${parameters} ];
 then
   usage
 else
-  python -m tf2onnx.convert --input ${para1} --output ${para2} --inputs input_tensor:0 --outputs final_output:0 --opset 10 --fold_const
+  python -m tf2onnx.convert --input ${para1} --output ${para2} --inputs input_tensor:0 --outputs final_output:0 --opset 13
 fi
 }
 
